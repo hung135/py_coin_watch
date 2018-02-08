@@ -9,20 +9,18 @@ server = smtplib.SMTP( "smtp.gmail.com", 587 )
 server.starttls()
 logon_id=os.getenv('logon_id')
 mail_pwd=os.getenv('mail_pwd')
+phone=os.getenv('phone')
+phone2=os.getenv('phone2')
 print logon_id
 print mail_pwd
 server.login( logon_id, mail_pwd )
-#dest='5715250462@tmomail.net'
-dest='7038321055@mms.att.net'
-#dest='6464069268@vtext.com'
-msg='aaaaaaahhh roaaar'
-#dest='5712168431@mms.att.net'
-#dest='7033001467@vtext.com'
-#dest='hung135@gmail.com'
-# Send text message through SMS gateway of destination number
-print('Sending Txt:',msg)
-z=zz(coin_str='ZCL')
-print(str(z.msg))
 
-server.sendmail( logon_id, dest, str(z.msg))
+
+
+# Send text message through SMS gateway of destination number
+
+z=zz(coin_str='ZCL')
+print('Sending Txt:',z.msg)
+
+#server.sendmail( logon_id, phone, str(z.msg))
 
