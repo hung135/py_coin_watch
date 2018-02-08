@@ -2,7 +2,12 @@ import pprint as pp
 
 
 class Exchange:
-    def __init__(self,api_key=None,secrete_key=None,exchange='BITTREX'):
+    msg="{}->{} Price {} Vol {}"
+
+    def get_coin(self,coin):
+
+        return "FUCKU"
+    def __init__(self,api_key=None,secrete_key=None,exchange='BITTREX',coin_str='BTC-USDT'):
         if exchange=='BITTREX':
             from bittrex.bittrex import Bittrex, API_V2_0
             # my_bittrex = Bittrex(None, None, api_version=API_V2_0)  # or defaulting to v1.1 as Bittrex(None, None)
@@ -11,12 +16,12 @@ class Exchange:
             # print(my_bittrex,dir(my_bittrex))
             summary = my_bittrex.get_market_summaries()
             # pp.pprint(summary)
+
             for coin in summary['result']:
-                if coin['MarketName'].find('ZCL') > 0:
-                    print(coin['MarketName'])
-                    pp.pprint(coin)
-                    print(coin['Volume'])
-                    print(coin['Bid'])
-                    print(coin['Volume'])
-                    print(str(coin).replace(',', '\n'))
+
+                if coin['MarketName'].find(coin_str )> 0:
+                    print(coin_str)
+                    self.msg=self.msg.format(exchange,coin['MarketName'],coin['Bid'],coin['Volume'])
+
+
 
