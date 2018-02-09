@@ -1,7 +1,7 @@
 
 import smtplib
 import os
-from exchange import Exchange as zz
+from exchange import Exchange
 
 # Establish a secure session with gmail's outgoing SMTP server using your gmail account
 server = smtplib.SMTP( "smtp.gmail.com", 587 )
@@ -16,8 +16,9 @@ server.login(logon_id, logon_pwd)
 
 # Send text message through SMS gateway of destination number
 
-z=zz(exchange='YOBIT',coin_str='BTC')
-print(str(z.msg))
+ex=Exchange(exchange='BITTREX',market='BTC')
+ex.compare_price(hours=24,market='BTC-NEO')
+print(str(ex.msg))
 
 #server.sendmail( logon_id, phone, str(z.msg))
 
