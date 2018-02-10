@@ -1,6 +1,27 @@
 import pprint as pp
-import exchange
 
+# Create json to variable mapping for each exchange
+BITTREX_MAP = {
+    'bid': 'Bid',
+    'sell': 'Ask',
+    'price_high_24hr': 'High',
+    'last': 'Last',
+    'price_low_24hr': 'Low',
+    'market': 'MarketName',
+    'total_buy': 'OpenBuyOrders',
+    'total_sell': 'OpenSellOrders',
+    'price_yesterday': 'PrevDay',
+    'volume': 'Volume'
+}
+BINANCE_MAP = {'market': 'symbol'
+    , 'bid': 'bidPrice'
+    , 'sell': 'askPrice'
+    , 'price_high_24hr': 'highPrice'
+    , 'volume': 'volume'
+    , 'price_low_24hr': 'lowPrice'
+    , 'price_yesterday': 'prevClosePrice'
+    , 'weightedAvgPrice': 'weightedAvgPrice'
+               }
 
 class _coin:
     msg = "{}->{} \nB{} \nA{} \nYest {} \nlow {} \nhigh {}\n L{}% H{}%"
@@ -14,27 +35,7 @@ class _coin:
     price_yesterday = 0
     price_low_24hr = 0
     price_high_24hr = 0
-    BITTREX_MAP = {
-        'bid': 'Bid',
-        'sell': 'Sell',
-        'price_high_24hr': 'High',
-        'last': 'Last',
-        'price_low_24hr': 'Low',
-        'market': 'MarketName',
-        'total_buy': 'OpenBuyOrders',
-        'total_sell': 'OpenSellOrders',
-        'price_yesterday': 'PrevDay',
-        'volume': 'Volume'
-    }
-    BINANCE_MAP = {'market': 'symbol'
-        , 'bid': 'bidPrice'
-        , 'sell': 'askPrice'
-        , 'price_high_24hr': 'highPrice'
-        , 'volume': 'volume'
-        , 'price_low_24hr': 'lowPrice'
-        , 'price_yesterday': 'prevClosePrice'
-        , 'weightedAvgPrice': 'weightedAvgPrice'
-                   }
+
 
     def __init__(self, json, exchange_map, ex_name):
         self.exchange_name = ex_name
@@ -127,12 +128,24 @@ class Exchange:
         return connection_obj
 
     def get_coin_data_json(self,Coin):
-        json = None
+        json = {}
         #print("getcoindata",Coin.market,Coin.exchange_name)
         if Coin.exchange_name=='BINANCE':
             json = self.conn.get_ticker(symbol=Coin.market)
+            self.exchange_map=BINANCE_MAP
+        if Coin.exchange_name=='BITTREX':
+            self.exchange_map=BITTREX_MAP
+
+            summary=self.conn.get_market_summaries()
+
+            for coin in summary['result']:
+                if coin['MarketName']==Coin.market:
+                    json=coin
+                    #pp.pprint(coin)
+
 
         return json
+
 
     def __init__(self, api_key=None, secrete_key=None, exchange='BITTREX'):
         self.conn = self.get_conn(exchange)

@@ -1,9 +1,9 @@
 import exchange
 class Coin:
     msg = "{}->{} \nB{} \nA{} \nYest {} \nlow {} \nhigh {}\n L{}% H{}%"
-    bid = None
-    sell = None
-    last = None
+    bid = 0
+    sell = 0
+    last = 0
     market = None
     exchange_name = None
     exchange_conn = None
@@ -12,27 +12,7 @@ class Coin:
     price_yesterday = 0
     price_low_24hr = 0
     price_high_24hr = 0
-    BITTREX_MAP = {
-        'bid': 'Bid',
-        'sell': 'Sell',
-        'price_high_24hr': 'High',
-        'last': 'Last',
-        'price_low_24hr': 'Low',
-        'market': 'MarketName',
-        'total_buy': 'OpenBuyOrders',
-        'total_sell': 'OpenSellOrders',
-        'price_yesterday': 'PrevDay',
-        'volume': 'Volume'
-    }
-    BINANCE_MAP = {'market': 'symbol'
-        , 'bid': 'bidPrice'
-        , 'sell': 'askPrice'
-        , 'price_high_24hr': 'highPrice'
-        , 'volume': 'volume'
-        , 'price_low_24hr': 'lowPrice'
-        , 'price_yesterday': 'prevClosePrice'
-        , 'weightedAvgPrice': 'weightedAvgPrice'
-                   }
+
 
     def __init__(self, coin_market, exchange_obj):
         self.market=coin_market
@@ -59,10 +39,14 @@ class Coin:
 
         if type(json) is not dict:
             raise Exception("json must be type dict")
-        if type(self.BINANCE_MAP) is not dict:
+
+        if type(self.exchange_conn.exchange_map) is not dict:
             raise Exception("exchange_map must be type dict")
         # looks through json and pulls fields that matches the mapping and set the instance variable
-        for key, val in self.BINANCE_MAP.items():
+
+
+
+        for key, val in self.exchange_conn.exchange_map.items():
             value = json.get(val, 0)
             if value != 0:
                 setattr(self, key, value)
@@ -70,7 +54,6 @@ class Coin:
         self.high_percent=float(exchange.Rule.check_24hr_high(self))
 
     def refresh(self):
-
         self.fill_data2(self.exchange_conn.get_coin_data_json(self))
 
 
