@@ -18,12 +18,13 @@ server.login(logon_id, logon_pwd)
 
 binance=Exchange(binance_api,binacne_secret,Exchange.EX_BINANCE)
 bittrex=Exchange(binance_api,binacne_secret,Exchange.EX_BITTREX)
-coin_list=[]
-coin_list.append(Coin('BTC-SC',exchange_obj=bittrex))
-coin_list.append(Coin('NEOBTC',exchange_obj=binance))
-#coin_list.append(Coin('VENBTC',exchange_obj=binance))
-#coin_list.append(Coin('ICXBTC',exchange_obj=binance))
-#coin_list.append(Coin('NANOBTC',exchange_obj=binance))
+binance.add_coin_symbol('VEN')
+binance.add_coin_symbol('ICX')
+binance.add_coin_symbol('NANO')
+binance.add_coin_symbol('TRX')
+bittrex.add_coin_symbol('SC')
+bittrex.add_coin_symbol('NEO')
+coin_list=binance.create_coin_market()+bittrex.create_coin_market()
 
 while(True):
     for c in coin_list:
