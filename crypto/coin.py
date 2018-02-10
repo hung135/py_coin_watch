@@ -1,4 +1,4 @@
-import exchange
+import crypto
 class Coin:
     msg = "{}->{} \nB{} \nA{} \nYest {} \nlow {} \nhigh {}\n L{}% H{}%"
     bid = 0
@@ -16,7 +16,7 @@ class Coin:
 
     def __init__(self, coin_market, exchange_obj):
         self.market=coin_market
-        assert isinstance(exchange_obj, exchange.Exchange)
+        assert isinstance(exchange_obj, crypto.Exchange)
         self.exchange_name=exchange_obj.exchange_name
         self.exchange_conn=exchange_obj
         self.refresh()
@@ -32,8 +32,8 @@ class Coin:
             value = json.get(val, 0)
             if value != 0:
                 setattr(self, key, value)
-        self.low_percent=float(exchange.Rule.check_24hr_low(self))
-        self.high_percent=float(exchange.Rule.check_24hr_high(self))
+        self.low_percent=float(crypto.Rule.check_24hr_low(self))
+        self.high_percent=float(crypto.Rule.check_24hr_high(self))
 
     def fill_data2(self, json):
 
@@ -50,8 +50,8 @@ class Coin:
             value = json.get(val, 0)
             if value != 0:
                 setattr(self, key, value)
-        self.low_percent=float(exchange.Rule.check_24hr_low(self))
-        self.high_percent=float(exchange.Rule.check_24hr_high(self))
+        self.low_percent=float(crypto.Rule.check_24hr_low(self))
+        self.high_percent=float(crypto.Rule.check_24hr_high(self))
 
     def refresh(self):
         self.fill_data2(self.exchange_conn.get_coin_data_json(self))

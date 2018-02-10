@@ -1,4 +1,4 @@
-from exchange import Coin
+from crypto import Coin
 class Rule:
     to_do_list=None
     

@@ -1,6 +1,6 @@
 import pprint as pp
 
-# Create json to variable mapping for each exchange
+# Create json to variable mapping for each crypto
 BITTREX_MAP = {
     'bid': 'Bid',
     'sell': 'Ask',
@@ -49,7 +49,7 @@ class Exchange:
         for coin in self.summary['result']:
             if coin['MarketName'].find(market) > 0:
                 self.coin = _coin(json=coin, exchange_map=_coin.BINANCE_MAP, ex_name='BITTREX')
-                # self.msg = self.msg.format(self.exchange, coin['MarketName'], coin['Bid'], coin['Volume'])
+                # self.msg = self.msg.format(self.crypto, coin['MarketName'], coin['Bid'], coin['Volume'])
 
     def _do_binance(self, api_key, secrete_key, market):
         from binance.client import Client

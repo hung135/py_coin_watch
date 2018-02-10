@@ -1,5 +1,5 @@
 import smtplib, os, time
-from exchange import Exchange,Rule,Coin
+from crypto import Exchange,Rule,Coin
 
 # Establish a secure session with gmail's outgoing SMTP server using your gmail account
 server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -33,7 +33,7 @@ while(True):
     time.sleep(40)
 # While loop
 #
-#minimum to sleep for before hitting exchange
+#minimum to sleep for before hitting crypto
 secs_min=60
 print("looping Interval.:",secs_min)
 while (False):
