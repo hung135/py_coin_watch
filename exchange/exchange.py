@@ -23,49 +23,6 @@ BINANCE_MAP = {'market': 'symbol'
     , 'weightedAvgPrice': 'weightedAvgPrice'
                }
 
-class _coin:
-    msg = "{}->{} \nB{} \nA{} \nYest {} \nlow {} \nhigh {}\n L{}% H{}%"
-    bid = None
-    sell = None
-    last = None
-    market = None
-    exchange_name = None
-    low_percent = 100
-    high_percent = 0
-    price_yesterday = 0
-    price_low_24hr = 0
-    price_high_24hr = 0
-
-
-    def __init__(self, json, exchange_map, ex_name):
-        self.exchange_name = ex_name
-        if type(json) is not dict:
-            raise Exception("json must be type dict")
-        if type(exchange_map) is not dict:
-            raise Exception("exchange_map must be type dict")
-        # looks through json and pulls fields that matches the mapping and set the instance variable
-        for key, val in exchange_map.items():
-            value = json.get(val, 0)
-            if value != 0:
-                setattr(self, key, value)
-        self.low_percent = float(exchange_name.Rule.check_24hr_low(self))
-        self.high_percent = float(exchange_name.Rule.check_24hr_high(self))
-
-    def refresh(self, exchange):
-        pass
-
-    def get_sms_msg(self):
-        return self.msg.format(self.exchange_name
-                               , self.market
-                               , self.bid,
-                               self.sell,
-                               self.price_yesterday,
-                               self.price_low_24hr,
-                               self.price_high_24hr,
-                               round(self.low_percent, 2),
-                               round(self.high_percent, 2))
-
-
 class Exchange:
     EX_BINANCE = 'BINANCE'
     EX_BITTREX = 'BITTREX'
@@ -73,22 +30,11 @@ class Exchange:
     key_api = None
     key_secret = None
     msg = "{}->{} Price {} Vol {}"
-    coin = None
+    my_coins = []
     exchange_name = None
-    def get_coin(self, coin):
-        pass
 
-    def compare_price(self, hours, market):
-        pass
-        # x=self.my_bittrex.get_market_summary(market=market)
-        # price_now=x['Bid']
-        # price_yesterday=[]
-        # low=x['Low']
-        # json=x['result']
-        # print(type(json))
-        # x=_coin(json=json[0])
-        # pp.pprint(x['result'])
-        # print(x.price_now,x.price_yesterday,x.price_low_24hr)
+
+
 
     def _do_bittrex(self, api_key, secrete_key, market):
         from bittrex.bittrex import Bittrex, API_V2_0
@@ -111,16 +57,32 @@ class Exchange:
         price = client.get_ticker(symbol=market)
         self.coin = _coin(json=price, exchange_map=_coin.BINANCE_MAP, ex_name='BINANCE')
 
-    def get_conn(self, exchange):
+    def _get_my_coins(self):
+
+        if self.exchange_name == 'BINANCE':
+            from binance.client import Client as BinanceClient
+            x=self.conn.get_account()['balances']
+            for asset in x:
+                if float(asset['free'])>1:
+                    print(asset)
+
+            #pp.pprint(x)
+
+
+        elif self.exchange_name == 'BITTREX':
+            pass
+
+
+    def _get_conn(self):
         connection_obj = None
         client_obj = None
-        if exchange == 'BINANCE':
-            from binance.client import Client
-            client_obj = Client
-        elif exchange == 'BITTREX':
-            from bittrex.bittrex import Bittrex, API_V2_0
+        if self.exchange_name == 'BINANCE':
+            from binance.client import Client as BinanceClient
+            client_obj = BinanceClient
+        elif self.exchange_name == 'BITTREX':
+            from bittrex.bittrex import Bittrex as BittrexClient, API_V2_0
             # my_bittrex = Bittrex(None, None, api_version=API_V2_0)  # or defaulting to v1.1 as Bittrex(None, None)
-            client_obj = Bittrex
+            client_obj = BittrexClient
 
         if client_obj is not None:
             connection_obj = client_obj(self.key_api, self.key_secret)
@@ -147,13 +109,10 @@ class Exchange:
         return json
 
 
-    def __init__(self, api_key=None, secrete_key=None, exchange='BITTREX'):
-        self.conn = self.get_conn(exchange)
+    def __init__(self, api_key=None, secret_key=None, exchange='BITTREX'):
+        self.key_api=api_key
+        self.key_secret=secret_key
         self.exchange_name=exchange
+        self.conn = self._get_conn()
+        self.my_coins = self._get_my_coins()
 
-    def do_nothing(self, api_key=None, secrete_key=None, exchange='BITTREX', market='BTC-USDT'):
-        self.exchange = exchange
-        if exchange == 'BITTREX':
-            self._do_bittrex(api_key, secrete_key, market)
-        if exchange == 'BINANCE':
-            self._do_binance(api_key, secrete_key, market)
