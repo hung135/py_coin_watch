@@ -17,10 +17,10 @@ server.login(logon_id, logon_pwd)
 
 binance = Exchange(binance_api, binacne_secret, Exchange.EX_BINANCE)
 bittrex = Exchange(binance_api, binacne_secret, Exchange.EX_BITTREX)
-binance.add_coin_symbol('VEN')
-binance.add_coin_symbol('ICX')
-binance.add_coin_symbol('NANO')
-binance.add_coin_symbol('TRX')
+binance.add_coin_symbol('VEN','<')
+binance.add_coin_symbol('ICX','<')
+binance.add_coin_symbol('NANO','<')
+binance.add_coin_symbol('TRX','<')
 binance.add_coin_symbol('EOS')
 bittrex.add_coin_symbol('SC')
 bittrex.add_coin_symbol('NEO')
@@ -35,9 +35,13 @@ while (True):
     os.system('clear')
     connected=False
     print(datetime.datetime.utcnow())
-
+    print(Coin.get_table_header())
+    coin_list.sort(key=lambda coin: min([coin.low_percent,coin.high_percent]), reverse=True)
     for c in coin_list:
-        print(str.replace(c.get_sms_msg(), '\n', ' '))
+        assert isinstance(c, Coin)
+        #print(str.replace(c.get_sms_msg(), '\n', ' '))
+        print(c.get_formatted_table_row())
+
         try:
             if(c.send_sms(server, logon_id, phone_list, send_minutes=20)):
                 if not connected:
@@ -50,9 +54,9 @@ while (True):
             #server = smtplib.SMTP("smtp.gmail.com", 587)
             #c.send_sms(server, logon_id, phone_list, send_minutes=20)
 
-    for Coin in coin_list:
-        Coin.refresh()
-    coin_list.sort(key=lambda Coin: Coin.low_percent, reverse=True)
+    for coin in coin_list:
+        coin.refresh()
+
     sys.stdout.write("|")
     for l in range(sleep_time):
         sys.stdout.write(".")

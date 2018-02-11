@@ -19,15 +19,15 @@ class Coin:
     price_yesterday = 0
     price_low_24hr = 0
     price_high_24hr = 0
-    hodl=0
+    hodl = 0
     send_history = []
     last_sent = None
     rule_list = set()
 
-    def __init__(self, coin_market, exchange_obj, symbol=None,hodl=0):
+    def __init__(self, coin_market, exchange_obj, symbol=None, hodl=0):
         self.market = coin_market
         self.symbol = symbol
-        self.hodl=hodl
+        self.hodl = hodl
         self.rule_list.add(crypto.Rule.check_24hr_low)
         self.rule_list.add(crypto.Rule.check_24hr_high)
         assert isinstance(exchange_obj, crypto.Exchange)
@@ -55,7 +55,8 @@ class Coin:
         try:
             self.fill_data(self.exchange_conn.get_coin_data_json(self))
         except Exception as e:
-            print("Error Filling Data:",e)
+            print("Error Filling Data:", e)
+
     def send_sms(self, server, sender, phone_list, send_minutes=30):
         send = False
         assert isinstance(phone_list, list)
@@ -84,14 +85,44 @@ class Coin:
             self.last_sent = datetime.datetime.now()
         return send
 
+    def get_table_header():
+        template = "{}{}{}{}{}{}{}{}{}{}"
+        txt = template.format(
+            str("EXCHANGE").ljust(10, ' '),
+            str("COIN").ljust(10, ' '),
+            str("BUY").ljust(12, ' '),
+            str("ASK").ljust(12, ' '),
+            str("PREV").ljust(12, ' '),
+            str("LOW").ljust(12, ' '),
+            str("HIGH").ljust(12, ' '),
+            str("%FromLOW").ljust(10, ' '),
+            str("%FromHIGH").ljust(10, ' '),
+            str("HOLD").ljust(10, ' ')
+        )
+        return txt
+    def get_formatted_table_row(self):
+        template = "{}{}{}{}{}{}{}{}{}{}"
+        txt = template.format(
+            str(self.exchange_name).ljust(10, ' '),
+            str(self.symbol).ljust(10, ' '),
+            str(self.bid).ljust(12, ' '),
+            str(self.sell).ljust(12, ' '),
+            str(self.price_yesterday).ljust(12, ' '),
+            str(self.price_low_24hr).ljust(12, ' '),
+            str(self.price_high_24hr).ljust(12, ' '),
+            str(round(self.low_percent, 2)).ljust(10, ' '),
+            str(round(self.high_percent, 2)).ljust(10, ' '),
+            str(self.hodl).ljust(10, ' ')
+        )
+        return txt
     def get_sms_msg(self):
         return self.msg.format(self.exchange_name,
-                               self.symbol.ljust(6,' '),
-                               str(self.bid).ljust(10,' '),
-                               str(self.sell).ljust(10,' '),
-                               str(self.price_yesterday).ljust(10,' '),
-                               str(self.price_low_24hr).ljust(10,' '),
-                               str(self.price_high_24hr).ljust(10,' '),
-                               str(round(self.low_percent, 2)).rjust(5,' '),
+                               self.symbol.ljust(6, ' '),
+                               str(self.bid).ljust(10, ' '),
+                               str(self.sell).ljust(10, ' '),
+                               str(self.price_yesterday).ljust(10, ' '),
+                               str(self.price_low_24hr).ljust(10, ' '),
+                               str(self.price_high_24hr).ljust(10, ' '),
+                               str(round(self.low_percent, 2)).rjust(5, ' '),
                                round(self.high_percent, 2),
                                self.hodl)

@@ -39,9 +39,6 @@ class Exchange:
     exchange_name = None
     my_hodl = {}
 
-
-
-
     def _get_my_coins(self):
         my_coins = set()
         if self.exchange_name == 'BINANCE':
@@ -51,7 +48,7 @@ class Exchange:
                 if float(asset['free']) > 10:
                     # print("adding",asset['asset'],type(asset['asset']))
                     my_coins.add(asset['asset'])
-                    self.my_hodl[asset['asset']]=asset['free']
+                    self.my_hodl[asset['asset']] = asset['free']
 
             # pp.pprint(x)
 
@@ -77,10 +74,13 @@ class Exchange:
 
         return connection_obj
 
-    def add_coin_symbol(self, coin_symbol):
+    def add_coin_symbol(self, coin_symbol, hodl=0):
         # print(type(self.my_coins))
         self.my_coins.add(coin_symbol)
         self.my_coins = set(self.my_coins)
+        if (self.my_hodl.get(coin_symbol, 0)) == 0:
+            #print(self.my_hodl)
+            self.my_hodl[coin_symbol] = hodl
 
     def get_coin_data_json(self, Coin):
         json = {}
@@ -102,15 +102,16 @@ class Exchange:
                         json = coin
                 except Exception as e:
                     # pp.pprint(coin)
-                    print("Error Getting Data From JSON:",e,coin)
+                    print("Error Getting Data From JSON:", e, coin)
 
         return json
 
     def create_coin_market(self):
         self.my_coin_market = []
         for symbol in self.my_coins:
-            hodl=self.my_hodl.get(symbol,0)
-            self.my_coin_market.append(Coin(self.market_pattern.format(symbol), exchange_obj=self, symbol=symbol,hodl=hodl))
+            hodl = self.my_hodl.get(symbol, 0)
+            self.my_coin_market.append(
+                Coin(self.market_pattern.format(symbol), exchange_obj=self, symbol=symbol, hodl=hodl))
         return self.my_coin_market
 
     def __init__(self, api_key=None, secret_key=None, exchange='BITTREX'):
