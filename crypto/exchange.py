@@ -1,5 +1,6 @@
 import pprint as pp
 from crypto.coin import Coin
+
 # Create json to variable mapping for each crypto
 BITTREX_MAP = {
     'bid': 'Bid',
@@ -24,20 +25,18 @@ BINANCE_MAP = {'market': 'symbol'
     , 'weightedAvgPrice': 'weightedAvgPrice'
                }
 
+
 class Exchange:
     EX_BINANCE = 'BINANCE'
     EX_BITTREX = 'BITTREX'
     EX_POLINEX = 'POLINEX'
-    market_pattern=None
+    market_pattern = None
     key_api = None
     key_secret = None
     msg = "{}->{} Price {} Vol {}"
     my_coins = set()
     my_coin_market = []
     exchange_name = None
-
-
-
 
     def _do_bittrex(self, api_key, secrete_key, market):
         from bittrex.bittrex import Bittrex, API_V2_0
@@ -61,22 +60,21 @@ class Exchange:
         self.coin = _coin(json=price, exchange_map=_coin.BINANCE_MAP, ex_name='BINANCE')
 
     def _get_my_coins(self):
-        my_coins=set()
+        my_coins = set()
         if self.exchange_name == 'BINANCE':
             from binance.client import Client as BinanceClient
-            x=self.conn.get_account()['balances']
+            x = self.conn.get_account()['balances']
             for asset in x:
-                if float(asset['free'])>1:
-                    print("adding",asset['asset'],type(asset['asset']))
+                if float(asset['free']) > 1:
+                    # print("adding",asset['asset'],type(asset['asset']))
                     my_coins.add(asset['asset'])
 
-            #pp.pprint(x)
+            # pp.pprint(x)
 
 
         elif self.exchange_name == 'BITTREX':
             pass
         return my_coins
-
 
     def _get_conn(self):
         connection_obj = None
@@ -84,51 +82,49 @@ class Exchange:
         if self.exchange_name == 'BINANCE':
             from binance.client import Client as BinanceClient
             client_obj = BinanceClient
-            self.market_pattern="{}BTC"
+            self.market_pattern = "{}BTC"
         elif self.exchange_name == 'BITTREX':
             from bittrex.bittrex import Bittrex as BittrexClient, API_V2_0
             # my_bittrex = Bittrex(None, None, api_version=API_V2_0)  # or defaulting to v1.1 as Bittrex(None, None)
             client_obj = BittrexClient
-            self.market_pattern="BTC-{}"
+            self.market_pattern = "BTC-{}"
         if client_obj is not None:
             connection_obj = client_obj(self.key_api, self.key_secret)
 
         return connection_obj
 
     def add_coin_symbol(self, coin_symbol):
-        print(type(self.my_coins))
+        # print(type(self.my_coins))
         self.my_coins.add(coin_symbol)
-        self.my_coins=set(self.my_coins)
+        self.my_coins = set(self.my_coins)
 
-    def get_coin_data_json(self,Coin):
+    def get_coin_data_json(self, Coin):
         json = {}
-        #print("getcoindata",Coin.market,Coin.exchange_name)
-        if Coin.exchange_name=='BINANCE':
+        # print("getcoindata",Coin.market,Coin.exchange_name)
+        if Coin.exchange_name == 'BINANCE':
             json = self.conn.get_ticker(symbol=Coin.market)
-            self.exchange_map=BINANCE_MAP
-        if Coin.exchange_name=='BITTREX':
-            self.exchange_map=BITTREX_MAP
+            self.exchange_map = BINANCE_MAP
+        if Coin.exchange_name == 'BITTREX':
+            self.exchange_map = BITTREX_MAP
 
-            summary=self.conn.get_market_summaries()
+            summary = self.conn.get_market_summaries()
 
             for coin in summary['result']:
-                if coin['MarketName']==Coin.market:
-                    json=coin
-                    #pp.pprint(coin)
-
+                if coin['MarketName'] == Coin.market:
+                    json = coin
+                    # pp.pprint(coin)
 
         return json
+
     def create_coin_market(self):
-        self.my_coin_market=[]
+        self.my_coin_market = []
         for a in self.my_coins:
             self.my_coin_market.append(Coin(self.market_pattern.format(a), exchange_obj=self))
         return self.my_coin_market
 
     def __init__(self, api_key=None, secret_key=None, exchange='BITTREX'):
-        self.key_api=api_key
-        self.key_secret=secret_key
-        self.exchange_name=exchange
+        self.key_api = api_key
+        self.key_secret = secret_key
+        self.exchange_name = exchange
         self.conn = self._get_conn()
         self.my_coins = self._get_my_coins()
-
-
