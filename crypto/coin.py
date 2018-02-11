@@ -6,7 +6,7 @@ import crypto
 
 
 class Coin:
-    msg = "{}->{}\nB{}\nA{} \nPrev {}\nL {}\nH {}\nL{}% H{}%"
+    msg = "{}->{}\nB{}\nA{} \nPrev {}\nL {}\nH {}\nL{}% H{}%\nQTY {}"
     bid = 0
     sell = 0
     last = 0
@@ -19,13 +19,15 @@ class Coin:
     price_yesterday = 0
     price_low_24hr = 0
     price_high_24hr = 0
+    hodl=0
     send_history = []
     last_sent = None
     rule_list = set()
 
-    def __init__(self, coin_market, exchange_obj, symbol=None):
+    def __init__(self, coin_market, exchange_obj, symbol=None,hodl=0):
         self.market = coin_market
         self.symbol = symbol
+        self.hodl=hodl
         self.rule_list.add(crypto.Rule.check_24hr_low)
         self.rule_list.add(crypto.Rule.check_24hr_high)
         assert isinstance(exchange_obj, crypto.Exchange)
@@ -91,4 +93,5 @@ class Coin:
                                str(self.price_low_24hr).ljust(10,' '),
                                str(self.price_high_24hr).ljust(10,' '),
                                str(round(self.low_percent, 2)).rjust(5,' '),
-                               round(self.high_percent, 2))
+                               round(self.high_percent, 2),
+                               self.hodl)

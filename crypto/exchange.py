@@ -37,6 +37,7 @@ class Exchange:
     my_coins = set()
     my_coin_market = []
     exchange_name = None
+    my_hodl = {}
 
 
 
@@ -50,6 +51,7 @@ class Exchange:
                 if float(asset['free']) > 10:
                     # print("adding",asset['asset'],type(asset['asset']))
                     my_coins.add(asset['asset'])
+                    self.my_hodl[asset['asset']]=asset['free']
 
             # pp.pprint(x)
 
@@ -107,7 +109,8 @@ class Exchange:
     def create_coin_market(self):
         self.my_coin_market = []
         for symbol in self.my_coins:
-            self.my_coin_market.append(Coin(self.market_pattern.format(symbol), exchange_obj=self, symbol=symbol))
+            hodl=self.my_hodl.get(symbol,0)
+            self.my_coin_market.append(Coin(self.market_pattern.format(symbol), exchange_obj=self, symbol=symbol,hodl=hodl))
         return self.my_coin_market
 
     def __init__(self, api_key=None, secret_key=None, exchange='BITTREX'):

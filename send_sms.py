@@ -1,4 +1,4 @@
-import smtplib, os, datetime, time
+import smtplib, os, datetime, time,sys
 from crypto import Exchange, Rule, Coin
 
 # Establish a secure session with gmail's outgoing SMTP server using your gmail account
@@ -21,7 +21,7 @@ binance.add_coin_symbol('VEN')
 binance.add_coin_symbol('ICX')
 binance.add_coin_symbol('NANO')
 binance.add_coin_symbol('TRX')
-
+binance.add_coin_symbol('EOS')
 bittrex.add_coin_symbol('SC')
 bittrex.add_coin_symbol('NEO')
 bittrex.add_coin_symbol('IGNIS')
@@ -46,11 +46,22 @@ while (True):
                     connected=True
         except:
             server.connect("smtp.gmail.com", 587)
+            connected=True
             #server = smtplib.SMTP("smtp.gmail.com", 587)
             #c.send_sms(server, logon_id, phone_list, send_minutes=20)
 
     for Coin in coin_list:
         Coin.refresh()
     coin_list.sort(key=lambda Coin: Coin.low_percent, reverse=True)
-    time.sleep(sleep_time)
+    sys.stdout.write("|")
+    for l in range(sleep_time):
+        sys.stdout.write(".")
+    sys.stdout.write("|\n")
+    sys.stdout.flush()
+    sys.stdout.write("|")
+    for l in range(sleep_time):
+
+        sys.stdout.write(".")
+        sys.stdout.flush()
+        time.sleep(1)
 # While loop
