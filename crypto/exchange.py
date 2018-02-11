@@ -38,26 +38,8 @@ class Exchange:
     my_coin_market = []
     exchange_name = None
 
-    def _do_bittrex(self, api_key, secrete_key, market):
-        from bittrex.bittrex import Bittrex, API_V2_0
 
-        # my_bittrex = Bittrex(None, None, api_version=API_V2_0)  # or defaulting to v1.1 as Bittrex(None, None)
-        self.my_bittrex = Bittrex(api_key, secrete_key)  # or defaulting to v1.1 as Bittrex(None, None)
-        self.my_bittrex.get_markets()
-        # print(my_bittrex,dir(my_bittrex))
-        self.summary = self.my_bittrex.get_market_summaries()
-        # pp.pprint(summary)
 
-        for coin in self.summary['result']:
-            if coin['MarketName'].find(market) > 0:
-                self.coin = _coin(json=coin, exchange_map=_coin.BINANCE_MAP, ex_name='BITTREX')
-                # self.msg = self.msg.format(self.crypto, coin['MarketName'], coin['Bid'], coin['Volume'])
-
-    def _do_binance(self, api_key, secrete_key, market):
-        from binance.client import Client
-        client = Client(api_key, secrete_key)
-        price = client.get_ticker(symbol=market)
-        self.coin = _coin(json=price, exchange_map=_coin.BINANCE_MAP, ex_name='BINANCE')
 
     def _get_my_coins(self):
         my_coins = set()
@@ -65,7 +47,7 @@ class Exchange:
             from binance.client import Client as BinanceClient
             x = self.conn.get_account()['balances']
             for asset in x:
-                if float(asset['free']) > 1:
+                if float(asset['free']) > 10:
                     # print("adding",asset['asset'],type(asset['asset']))
                     my_coins.add(asset['asset'])
 
@@ -102,7 +84,10 @@ class Exchange:
         json = {}
         # print("getcoindata",Coin.market,Coin.exchange_name)
         if Coin.exchange_name == 'BINANCE':
-            json = self.conn.get_ticker(symbol=Coin.market)
+            try:
+                json = self.conn.get_ticker(symbol=Coin.market)
+            except Exception as e:
+                print("Error getting coin data:{}".format(Coin.market))
             self.exchange_map = BINANCE_MAP
         if Coin.exchange_name == 'BITTREX':
             self.exchange_map = BITTREX_MAP
@@ -110,16 +95,19 @@ class Exchange:
             summary = self.conn.get_market_summaries()
 
             for coin in summary['result']:
-                if coin['MarketName'] == Coin.market:
-                    json = coin
+                try:
+                    if coin['MarketName'] == Coin.market:
+                        json = coin
+                except Exception as e:
                     # pp.pprint(coin)
+                    print("Error Getting Data From JSON:",e,coin)
 
         return json
 
     def create_coin_market(self):
         self.my_coin_market = []
-        for a in self.my_coins:
-            self.my_coin_market.append(Coin(self.market_pattern.format(a), exchange_obj=self))
+        for symbol in self.my_coins:
+            self.my_coin_market.append(Coin(self.market_pattern.format(symbol), exchange_obj=self, symbol=symbol))
         return self.my_coin_market
 
     def __init__(self, api_key=None, secret_key=None, exchange='BITTREX'):

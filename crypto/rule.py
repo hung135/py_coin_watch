@@ -8,7 +8,8 @@ class Rule:
         # print(Coin.get_sms_msg())
         avg_price = (float(Coin.sell))
         price = float(Coin.price_low_24hr)
-
+        if price==0:
+            return 0
         delta = abs(avg_price - float(price))
         low_delta_sat = delta * 100000000
         delta_percent = (delta / price) * 100
@@ -18,7 +19,8 @@ class Rule:
     def get_delta_24hr_high(Coin, threshold_percent=.5):
         avg_price = (float(Coin.bid))
         price = float(Coin.price_high_24hr)
-
+        if price==0:
+            return 0
         delta = abs(avg_price - float(price))
         low_delta_sat = delta * 100000000
         delta_percent = (delta / price) * 100

@@ -21,6 +21,7 @@ binance.add_coin_symbol('VEN')
 binance.add_coin_symbol('ICX')
 binance.add_coin_symbol('NANO')
 binance.add_coin_symbol('TRX')
+
 bittrex.add_coin_symbol('SC')
 bittrex.add_coin_symbol('NEO')
 bittrex.add_coin_symbol('IGNIS')
@@ -28,37 +29,28 @@ coin_list = binance.create_coin_market() + bittrex.create_coin_market()
 phone_list = []
 phone_list.append(phone)
 
-phone_list.append(phone)
+sleep_time=60
+last_sent=None
 while (True):
     os.system('clear')
+    connected=False
     print(datetime.datetime.utcnow())
+
     for c in coin_list:
-        print(str.replace(c.get_sms_msg(), '\n', ''))
-        c.send_sms(server, logon_id, phone_list, send_minutes=20)
+        print(str.replace(c.get_sms_msg(), '\n', ' '))
+        try:
+            if(c.send_sms(server, logon_id, phone_list, send_minutes=20)):
+                if not connected:
+                    server.connect("smtp.gmail.com", 587)
+                else:
+                    connected=True
+        except:
+            server.connect("smtp.gmail.com", 587)
+            #server = smtplib.SMTP("smtp.gmail.com", 587)
+            #c.send_sms(server, logon_id, phone_list, send_minutes=20)
+
     for Coin in coin_list:
         Coin.refresh()
     coin_list.sort(key=lambda Coin: Coin.low_percent, reverse=True)
-    time.sleep(40)
+    time.sleep(sleep_time)
 # While loop
-#
-# minimum to sleep for before hitting crypto
-secs_min = 60
-print("looping Interval.:", secs_min)
-while (False):
-    secs = secs_min
-    print(datetime.datetime.utcnow())
-
-    if (float(ex2.low_percent) < .4):
-        print("sending text")
-        assert isinstance(server, smtplib)
-        server.sendmail(logon_id, phone, ex2.get_sms_msg())
-        # what 3 minutes before running again if we send a txt msg out
-        secs = secs + secs_min * 15
-        print("Sleeping:{} secs".format(secs))
-    else:
-        print("Not Sending Low Percent:", ex2.low_percent)
-
-    print(ex2.get_sms_msg())
-    time.sleep(secs)
-    # ex.compare_price(hours=24, market='BTC-NEO')
-    # server.sendmail( logon_id, phone, ex2.get_sms_msg())
