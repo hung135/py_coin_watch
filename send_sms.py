@@ -3,7 +3,7 @@ from crypto import Exchange, Rule, Coin
 
 # Establish a secure session with gmail's outgoing SMTP server using your gmail account
 server = smtplib.SMTP("smtp.gmail.com", 587)
-print(type(server))
+
 server.starttls()
 logon_id = os.getenv('logon_id')
 logon_pwd = os.getenv('logon_pwd')
@@ -12,10 +12,18 @@ binacne_secret = os.getenv('secret_key')
 
 phone = os.getenv('phone')
 print(logon_id)
-print(logon_pwd)
+#print(logon_pwd)
 server.login(logon_id, logon_pwd)
 
+yobit = Exchange(None, None, Exchange.EX_YOBIT)
+
+yobit.add_coin_symbol('linda','<')
+
+
 poloniex = Exchange(None, None, Exchange.EX_POLONIEX)
+
+
+
 poloniex.add_coin_symbol('SC','<')
 poloniex.add_coin_symbol('XRP','<')
 binance = Exchange(binance_api, binacne_secret, Exchange.EX_BINANCE)
@@ -29,7 +37,9 @@ bittrex.add_coin_symbol('SC')
 bittrex.add_coin_symbol('NEO')
 bittrex.add_coin_symbol('IGNIS')
 bittrex.add_coin_symbol('NXT')
-coin_list = binance.create_coin_market() + bittrex.create_coin_market()+poloniex.create_coin_market()
+
+
+coin_list = binance.create_coin_market() + bittrex.create_coin_market()+poloniex.create_coin_market() +yobit.create_coin_market()
 phone_list = []
 phone_list.append(phone)
 
@@ -63,13 +73,13 @@ while (True):
 
     sys.stdout.write("|")
     for l in range(sleep_time):
-        sys.stdout.write(".")
+        sys.stdout.write("-")
     sys.stdout.write("|\n")
     sys.stdout.flush()
     sys.stdout.write("|")
     for l in range(sleep_time):
 
-        sys.stdout.write(".")
+        sys.stdout.write(">")
         sys.stdout.flush()
         time.sleep(1)
 # While loop
