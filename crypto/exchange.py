@@ -22,14 +22,22 @@ BINANCE_MAP = {'market': 'symbol'
     , 'volume': 'volume'
     , 'price_low_24hr': 'lowPrice'
     , 'price_yesterday': 'prevClosePrice'
+
+               }
+POLONIEX_MAP = {'market': 'symbol'
+    , 'bid': 'highestBid'
+    , 'sell': 'lowestAsk'
+    , 'price_high_24hr': 'high24hr'
+    , 'volume': 'baseVolume'
+    , 'price_low_24hr': 'low24hr'
+    #, 'price_yesterday': 'prevClosePrice'
     , 'weightedAvgPrice': 'weightedAvgPrice'
                }
-
 
 class Exchange:
     EX_BINANCE = 'BINANCE'
     EX_BITTREX = 'BITTREX'
-    EX_POLINEX = 'POLINEX'
+    EX_POLONIEX = 'POLONIEX'
     market_pattern = None
     key_api = None
     key_secret = None
@@ -64,12 +72,17 @@ class Exchange:
             from binance.client import Client as BinanceClient
             client_obj = BinanceClient
             self.market_pattern = "{}BTC"
+        elif self.exchange_name == 'POLONIEX':
+            from poloniex.poloniex import Poloniex as PoloniexClient
+            #client_obj = PoloniexClient()
+            self.market_pattern = "BTC_{}"
+            connection_obj=PoloniexClient()
         elif self.exchange_name == 'BITTREX':
             from bittrex.bittrex import Bittrex as BittrexClient, API_V2_0
             # my_bittrex = Bittrex(None, None, api_version=API_V2_0)  # or defaulting to v1.1 as Bittrex(None, None)
             client_obj = BittrexClient
             self.market_pattern = "BTC-{}"
-        if client_obj is not None:
+        if client_obj is not None and connection_obj is None:
             connection_obj = client_obj(self.key_api, self.key_secret)
 
         return connection_obj
@@ -85,6 +98,16 @@ class Exchange:
     def get_coin_data_json(self, Coin):
         json = {}
         # print("getcoindata",Coin.market,Coin.exchange_name)
+        if Coin.exchange_name == 'POLONIEX':
+            self.exchange_map = POLONIEX_MAP
+            from poloniex import Poloniex
+            assert isinstance(self.conn, Poloniex)
+
+            json=dict(self.conn.returnTicker()[Coin.market])
+            #import poloniex.utils
+            #assert isinstance(json, poloniex.utils.AutoCastDict)
+            #print(type(json),dict(json))
+
         if Coin.exchange_name == 'BINANCE':
             try:
                 json = self.conn.get_ticker(symbol=Coin.market)
@@ -93,9 +116,7 @@ class Exchange:
             self.exchange_map = BINANCE_MAP
         if Coin.exchange_name == 'BITTREX':
             self.exchange_map = BITTREX_MAP
-
             summary = self.conn.get_market_summaries()
-
             for coin in summary['result']:
                 try:
                     if coin['MarketName'] == Coin.market:
@@ -103,7 +124,6 @@ class Exchange:
                 except Exception as e:
                     # pp.pprint(coin)
                     print("Error Getting Data From JSON:", e, coin)
-
         return json
 
     def create_coin_market(self):

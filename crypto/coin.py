@@ -85,6 +85,7 @@ class Coin:
             self.last_sent = datetime.datetime.now()
         return send
 
+    @staticmethod
     def get_table_header():
         template = "{}{}{}{}{}{}{}{}{}{}"
         txt = template.format(
@@ -100,6 +101,8 @@ class Coin:
             str("HOLD").ljust(10, ' ')
         )
         return txt
+
+
     def get_formatted_table_row(self):
         template = "{}{}{}{}{}{}{}{}{}{}"
         txt = template.format(

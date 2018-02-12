@@ -28,6 +28,7 @@ class Rule:
         return delta_percent
 
     # ##################################################################
+    @staticmethod
     def check_24hr_low(coin, threshold_percent=.5):
         send = False
         assert isinstance(coin, Coin)
@@ -35,7 +36,7 @@ class Rule:
             send = True
         # print(coin.market, send,'low',float(coin.low_percent),threshold_percent)
         return send
-
+    @staticmethod
     def check_24hr_high(coin, threshold_percent=.5):
         send = False
         assert isinstance(coin, Coin)
