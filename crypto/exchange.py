@@ -116,7 +116,6 @@ class Exchange:
 
     def get_all_ticker(self):
 
-        # print("getcoindata",Coin.market,Coin.exchange_name)
         if self.exchange_name == 'YOBIT':
             import YoBit
             assert isinstance(self.conn, YoBit.YoBit)
@@ -187,7 +186,7 @@ class Exchange:
     # returns object so we can refresh the data
     def create_coin_market(self):
         self.my_coin_market = dict()
-        print(self.exchange_name, self.my_coin_market)
+
         for symbol_maket, symbol in self.my_coins.items():
             #hodl = self.my_hodl.get(symbol, 0)
             hodl=0
@@ -195,11 +194,9 @@ class Exchange:
                 # Coin(symbol_maket, exchange_obj=self, symbol=symbol, hodl=hodl))
                 Coin(symbol[0],symbol[1], self,hodl))
         for symbol_maket, symbol in self.all_exchange.items():
-            # print("inside",symbol,type(symbol),self.market_pattern2)
             self.my_coin_market[self.market_pattern2.format(symbol[0], symbol[1])] = (
                 Coin(symbol[0], symbol[1], exchange_obj=self,hodl=0))
 
-            # print(self.exchange_name, self.my_coin_market)
         return self.my_coin_market
 
     def add_coin_symbolV2(self, coin_struct):

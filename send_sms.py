@@ -4,9 +4,9 @@ from twilio import rest as TwilioClient
 from crypto.symbol import SymbolStruct
 
 # Establish a secure session with gmail's outgoing SMTP server using your gmail account
-server = smtplib.SMTP("smtp.gmail.com", 587)
+# server = smtplib.SMTP("smtp.gmail.com", 587)
 
-server.starttls()
+# server.starttls()
 
 logon_id = os.getenv('logon_id')
 logon_pwd = os.getenv('logon_pwd')
@@ -17,12 +17,11 @@ twilio_token=os.getenv('twilio_token')
 
 print(logon_id)
 #print(logon_pwd)
-server.login(logon_id, logon_pwd)
+#server.login(logon_id, logon_pwd)
 
 server = TwilioClient.Client(twilio_sid,twilio_token)
 phone = os.getenv('phone')
-phone = " "
-from_phone =" "
+from_phone = os.getenv('from_phone')
 coin=SymbolStruct('ETH',0,'USDT','<<<',all_exchange=False)
 coin2=SymbolStruct('ETH',0,'BTC','<<<',all_exchange=False)
 

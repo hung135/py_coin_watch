@@ -52,17 +52,10 @@ class Coin:
         self.high_percent = float(crypto.Rule.get_delta_24hr_high(self))
 
     def refresh(self):
-        try:
-            self.fill_data(self.exchange_conn.get_coin_data_json(self))
-        except Exception as e:
-            print("Error Filling Data:", e)
+        # try:
+        self.fill_data(
+            self.exchange_conn.get_coin_data_json(self))  # except Exception as e:  #   print("Error Filling Data:", e)
 
-    def send_twilio(self):
-        self.client = Client(account_sid, auth_token)
-        message = self.client.messages.create(
-            to=to_phone,
-            from_=from_phone,
-            body=msg)
 
     def send_sms(self, server, sender, phone_list, send_minutes=30):
         send = False
@@ -98,7 +91,7 @@ class Coin:
                     from_=sender,
                     body=self.get_sms_msg() + "\n" + time.ctime())
 
-            print("sending:", self.market)
+            #print("sending:", self.market)
             # self.last_sent = datetime.datetime.now()
         return send
 
