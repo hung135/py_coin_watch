@@ -1,5 +1,7 @@
-secret_key=
+export secret_key=
 export logon_id=
 export phone=
 export api_key=
-export logon_pwd=G
+export logon_pwd=
+export twilio_sid=
+export twilio_token=

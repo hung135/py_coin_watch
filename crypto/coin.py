@@ -1,4 +1,5 @@
 import datetime
+import time
 import pprint as pp
 import smtplib
 
@@ -7,32 +8,31 @@ import crypto
 
 class Coin:
     msg = "{}->{}\nB{}\nA{} \nPrev {}\nL {}\nH {}\nL{}% H{}%\nQTY {}"
-    bid = 0
-    sell = 0
-    last = 0
-    market = None
-    symbol = None
-    exchange_name = None
-    exchange_conn = None
-    low_percent = 100
-    high_percent = 0
-    price_yesterday = 0
-    price_low_24hr = 0
-    price_high_24hr = 0
-    hodl = 0
-    send_history = []
-    last_sent = None
+
+    last_sent = dict()
     rule_list = set()
 
-    def __init__(self, coin_market, exchange_obj, symbol=None, hodl=0):
-        self.market = coin_market
+    def __init__(self, symbol,basemarket, exchange_obj,hodl=0):
+        assert isinstance(exchange_obj, crypto.Exchange)
+
+        self.bid = 0
+        self.sell = 0
+        self.last = 0
+
         self.symbol = symbol
+        self.basemarket = basemarket
+        self.market = exchange_obj.market_pattern2.format(self.symbol, self.basemarket)
+
+        self.exchange_name = exchange_obj.exchange_name
+        self.exchange_conn = exchange_obj
+        self.low_percent = 100
+        self.high_percent = 0
+        self.price_yesterday = 0
+        self.price_low_24hr = 0
+        self.price_high_24hr = 0
         self.hodl = hodl
         self.rule_list.add(crypto.Rule.check_24hr_low)
         self.rule_list.add(crypto.Rule.check_24hr_high)
-        assert isinstance(exchange_obj, crypto.Exchange)
-        self.exchange_name = exchange_obj.exchange_name
-        self.exchange_conn = exchange_obj
         self.refresh()
 
     def fill_data(self, json):
@@ -57,13 +57,20 @@ class Coin:
         except Exception as e:
             print("Error Filling Data:", e)
 
+    def send_twilio(self):
+        self.client = Client(account_sid, auth_token)
+        message = self.client.messages.create(
+            to=to_phone,
+            from_=from_phone,
+            body=msg)
+
     def send_sms(self, server, sender, phone_list, send_minutes=30):
         send = False
         assert isinstance(phone_list, list)
 
         last_time_threshold = (datetime.datetime.now() - datetime.timedelta(minutes=send_minutes))
 
-        assert isinstance(server, smtplib.SMTP)
+        # assert isinstance(server, smtplib.SMTP)
         i = 0
         for r in self.rule_list:
             i += 1
@@ -71,23 +78,33 @@ class Coin:
             if (r(self)):
                 # server.sendmail(sender, phone, self.get_sms_msg())
                 # print(self.last_sent,last_time_threshold)
-                if self.last_sent is None or send:
+
+                if self.last_sent.get(self.symbol+self.basemarket, None) is None or send:
                     send = True
-                elif self.last_sent < last_time_threshold:
+
+                elif self.last_sent[self.symbol+self.basemarket] < last_time_threshold:
                     send = True
                     print("SendingAgain {}:".format(send_minutes))
                 else:
                     print("Already Send Waiting for {} minute to pass:".format(send_minutes))
         if send:
+            from twilio.rest import Client
+            assert isinstance(server, Client)
+            self.last_sent[self.symbol+self.basemarket] = datetime.datetime.now()
             for phone in phone_list:
-                server.sendmail(sender, phone, self.get_sms_msg())
+                # server.sendmail(sender, phone, self.get_sms_msg())
+                message = server.messages.create(
+                    to=phone_list,
+                    from_=sender,
+                    body=self.get_sms_msg() + "\n" + time.ctime())
+
             print("sending:", self.market)
-            self.last_sent = datetime.datetime.now()
+            # self.last_sent = datetime.datetime.now()
         return send
 
     @staticmethod
     def get_table_header():
-        template = "{}{}{}{}{}{}{}{}{}{}"
+        template = "{}{}{}{}{}{}{}{}{}{}{}"
         txt = template.format(
             str("EXCHANGE").ljust(10, ' '),
             str("COIN").ljust(10, ' '),
@@ -98,26 +115,41 @@ class Coin:
             str("HIGH").ljust(12, ' '),
             str("%FromLOW").ljust(10, ' '),
             str("%FromHIGH").ljust(10, ' '),
+            str("BTC").ljust(10, ' '),
             str("HOLD").ljust(10, ' ')
         )
         return txt
 
-
     def get_formatted_table_row(self):
-        template = "{}{}{}{}{}{}{}{}{}{}"
+        template = "{}{}{}{}{}{}{}{}{}{}{}"
+        sat = 100000000
+        btc = 0.0
+        try:
+            btc = round(float(self.hodl) * float(self.bid), 3)
+        except:
+            btc = 0.0
         txt = template.format(
             str(self.exchange_name).ljust(10, ' '),
             str(self.symbol).ljust(10, ' '),
-            str(self.bid).ljust(12, ' '),
-            str(self.sell).ljust(12, ' '),
-            str(self.price_yesterday).ljust(12, ' '),
-            str(self.price_low_24hr).ljust(12, ' '),
-            str(self.price_high_24hr).ljust(12, ' '),
+            str(round(float(self.bid) * sat)).ljust(12, ' '),
+            str(round(float(self.sell) * sat)).ljust(12, ' '),
+
+            # str(self.sell).ljust(12, ' '),
+            str(round(float(self.price_yesterday) * sat)).ljust(12, ' '),
+            # str(self.price_yesterday).ljust(12, ' '),
+            # str(self.price_low_24hr).ljust(12, ' '),
+            str(round(float(self.price_low_24hr) * sat)).ljust(12, ' '),
+
+            # str(self.price_high_24hr).ljust(12, ' '),
+            str(round(float(self.price_high_24hr) * sat)).ljust(12, ' '),
             str(round(self.low_percent, 2)).ljust(10, ' '),
+
             str(round(self.high_percent, 2)).ljust(10, ' '),
+            str(btc).ljust(7, ' '),
             str(self.hodl).ljust(10, ' ')
         )
         return txt
+
     def get_sms_msg(self):
         return self.msg.format(self.exchange_name,
                                self.symbol.ljust(6, ' '),
