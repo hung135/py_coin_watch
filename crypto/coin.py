@@ -8,9 +8,10 @@ import crypto
 
 class Coin:
     msg = "{}->{}\nB{}\nA{} \nPrev {}\nL {}\nH {}\nL{}% H{}%\nQTY {}"
-
+    send_buffer = dict()
     last_sent = dict()
     rule_list = set()
+    rule_threshhold = 1
 
     def __init__(self, symbol,basemarket, exchange_obj,hodl=0):
         assert isinstance(exchange_obj, crypto.Exchange)
@@ -56,6 +57,11 @@ class Coin:
         self.fill_data(
             self.exchange_conn.get_coin_data_json(self))  # except Exception as e:  #   print("Error Filling Data:", e)
 
+    def fill_send_buffer(self, delay_minutes=20):
+        for r in self.rule_list:
+            if (r(self)):
+                self.send_buffer[self.symbol + self.basemarket] = list(
+                    [datetime.datetime.now(), self.get_sms_msg(), delay_minutes])
 
     def send_sms(self, server, sender, phone_list, send_minutes=30):
         send = False

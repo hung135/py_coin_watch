@@ -3,44 +3,21 @@ from crypto.coin import Coin
 from crypto.symbol import SymbolStruct
 
 # Create json to variable mapping for each crypto
-BITTREX_MAP = {
-    'bid': 'Bid',
-    'sell': 'Ask',
-    'price_high_24hr': 'High',
-    'last': 'Last',
-    'price_low_24hr': 'Low',
-    'market': 'MarketName',
-    'total_buy': 'OpenBuyOrders',
-    'total_sell': 'OpenSellOrders',
-    'price_yesterday': 'PrevDay',
-    'volume': 'Volume'
-
-}
-BINANCE_MAP = {'market': 'symbol'
-    , 'bid': 'bidPrice'
-    , 'sell': 'askPrice'
-    , 'price_high_24hr': 'highPrice'
-    , 'volume': 'volume'
-    , 'price_low_24hr': 'lowPrice'
-    , 'price_yesterday': 'prevClosePrice'
+BITTREX_MAP = {'bid': 'Bid', 'sell': 'Ask', 'price_high_24hr': 'High', 'last': 'Last', 'price_low_24hr': 'Low',
+               'market': 'MarketName', 'total_buy': 'OpenBuyOrders', 'total_sell': 'OpenSellOrders',
+               'price_yesterday': 'PrevDay', 'volume': 'Volume'
 
                }
-POLONIEX_MAP = {'market': 'symbol'
-    , 'bid': 'highestBid'
-    , 'sell': 'lowestAsk'
-    , 'price_high_24hr': 'high24hr'
-    , 'volume': 'baseVolume'
-    , 'price_low_24hr': 'low24hr'
-                # , 'price_yesterday': 'prevClosePrice'
-    , 'weightedAvgPrice': 'weightedAvgPrice'
-                }
+BINANCE_MAP = {'market': 'symbol', 'bid': 'bidPrice', 'sell': 'askPrice', 'price_high_24hr': 'highPrice',
+               'volume': 'volume', 'price_low_24hr': 'lowPrice', 'price_yesterday': 'prevClosePrice'
+
+               }
+POLONIEX_MAP = {'market': 'symbol', 'bid': 'highestBid', 'sell': 'lowestAsk', 'price_high_24hr': 'high24hr',
+                'volume': 'baseVolume', 'price_low_24hr': 'low24hr'  # , 'price_yesterday': 'prevClosePrice'
+    , 'weightedAvgPrice': 'weightedAvgPrice'}
 YOBIT_MAP = {
 
-    'bid': 'buy'
-    , 'sell': 'sell'
-    , 'price_high_24hr': 'high'
-    , 'volume': 'vol'
-    , 'price_low_24hr': 'low'
+    'bid': 'buy', 'sell': 'sell', 'price_high_24hr': 'high', 'volume': 'vol', 'price_low_24hr': 'low'
     # , 'price_yesterday': 'prevClosePrice'
 
 }
@@ -188,14 +165,13 @@ class Exchange:
         self.my_coin_market = dict()
 
         for symbol_maket, symbol in self.my_coins.items():
-            #hodl = self.my_hodl.get(symbol, 0)
-            hodl=0
-            self.my_coin_market[symbol_maket] = (
-                # Coin(symbol_maket, exchange_obj=self, symbol=symbol, hodl=hodl))
-                Coin(symbol[0],symbol[1], self,hodl))
+            # hodl = self.my_hodl.get(symbol, 0)
+            hodl = 0
+            self.my_coin_market[symbol_maket] = (  # Coin(symbol_maket, exchange_obj=self, symbol=symbol, hodl=hodl))
+                Coin(symbol[0], symbol[1], self, hodl))
         for symbol_maket, symbol in self.all_exchange.items():
             self.my_coin_market[self.market_pattern2.format(symbol[0], symbol[1])] = (
-                Coin(symbol[0], symbol[1], exchange_obj=self,hodl=0))
+                Coin(symbol[0], symbol[1], exchange_obj=self, hodl=0))
 
         return self.my_coin_market
 
@@ -211,16 +187,14 @@ class Exchange:
             self.my_coins[self.keytemplate.format(coin_struct.symbol, coin_struct.basemarket)] = list(
                 [coin_struct.symbol, coin_struct.basemarket])
 
-    def add_coin_symbol(self, coin_symbol, basemarket,all_exchange=False):
+    def add_coin_symbol(self, coin_symbol, basemarket, all_exchange=False):
         if (all_exchange):
-            self.all_exchange[self.keytemplate.format(coin_symbol, basemarket)] = list(
-                [coin_symbol,basemarket])
+            self.all_exchange[self.keytemplate.format(coin_symbol, basemarket)] = list([coin_symbol, basemarket])
         else:
-            self.my_coins[self.keytemplate.format(coin_symbol, basemarket)] = list(
-                [coin_symbol,basemarket])
+            self.my_coins[self.keytemplate.format(coin_symbol, basemarket)] = list([coin_symbol, basemarket])
 
     # initial all instance variables
-    def __init__(self,  api_key=None, secret_key=None, exchange='BITTREX'):
+    def __init__(self, api_key=None, secret_key=None, exchange='BITTREX'):
         # We have to initalize all instance variable here
         self.keytemplate = "{}-{}"
         self.market_pattern = "{0}-{1}"

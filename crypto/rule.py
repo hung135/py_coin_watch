@@ -5,7 +5,7 @@ class Rule():
     to_do_list = None
 
     @staticmethod
-    def get_delta_24hr_low(coin, threshold_percent=.5):
+    def get_delta_24hr_low(coin):
         # print(Coin.get_sms_msg())
 
         assert isinstance(coin, Coin)
@@ -20,7 +20,7 @@ class Rule():
         return delta_percent
 
     @staticmethod
-    def get_delta_24hr_high(coin, threshold_percent=.5):
+    def get_delta_24hr_high(coin):
 
         avg_price = (float(coin.bid))
         price = float(coin.price_high_24hr)
@@ -34,21 +34,20 @@ class Rule():
 
     # ##################################################################
     @staticmethod
-    def check_24hr_low(coin, threshold_percent=.5):
+    def check_24hr_low(coin):
         assert isinstance(coin, Coin)
         send = False
-        assert isinstance(coin, Coin)
-        if float(coin.low_percent) < threshold_percent:
+        if float(coin.low_percent) < coin.rule_threshhold:
             send = True
         # print(coin.market, send,'low',float(coin.low_percent),threshold_percent)
         return send
 
     @staticmethod
-    def check_24hr_high(coin, threshold_percent=.5):
+    def check_24hr_high(coin):
         assert isinstance(coin, Coin)
         send = False
-        assert isinstance(coin, Coin)
-        if float(coin.high_percent) < threshold_percent:
+
+        if float(coin.high_percent) < coin.rule_threshhold:
             send = True
         # print(coin.market,send,'High',float(coin.high_percent),threshold_percent)
         return send

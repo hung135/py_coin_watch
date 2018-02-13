@@ -22,8 +22,6 @@ print(logon_id)
 server = TwilioClient.Client(twilio_sid,twilio_token)
 phone = os.getenv('phone')
 from_phone = os.getenv('from_phone')
-coin=SymbolStruct('ETH',0,'USDT','<<<',all_exchange=False)
-coin2=SymbolStruct('ETH',0,'BTC','<<<',all_exchange=False)
 
 binance = Exchange(binance_api, binacne_secret, Exchange.EX_BINANCE)
 bittrex = Exchange(binance_api, binacne_secret, Exchange.EX_BITTREX)
@@ -35,9 +33,9 @@ binance.add_coin_symbol('TRX','BTC',all_exchange=False)
 binance.add_coin_symbol('NANO','BTC',all_exchange=False)
 binance.add_coin_symbol('ADA','BTC',all_exchange=True)
 
+binance.add_coin_symbolV2(SymbolStruct('ETH', 0, 'BTC', '<<<', all_exchange=True))
+binance.add_coin_symbolV2(SymbolStruct('ETC', 0, 'BTC', '<<<', all_exchange=True))
 
-binance.add_coin_symbolV2(coin)
-binance.add_coin_symbolV2(coin2)
 
 
 
@@ -55,23 +53,25 @@ phone_list.append(phone)
 sleep_time=60
 last_sent=None
 while (True):
-    #os.system('clear')
+    os.system('clear')
     connected=False
     print(datetime.datetime.utcnow())
     print(Coin.get_table_header())
 
-    #coin_listx = sorted(coin_list.items(), key=min([coin_list.low_percent,coin_list.high_percent]))
+    coin_list_sorted = sorted(coin_list.values(), key=lambda x: min([x.low_percent, x.high_percent]), reverse=True)
     #coin_list.sort(key=lambda strky,coin: min([coin.low_percent,coin.high_percent]), reverse=True)
-    for str_key,c in coin_list.items():
-        #print(type(c),c)
+    for c in coin_list_sorted:
+
         assert isinstance(c, Coin)
         #print(str.replace(c.get_sms_msg(), '\n', ' '))
         print(c.get_formatted_table_row())
 
-
+        # run rules add coins to send buffer
+        c.fill_send_buffer(delay_minutes=20)
+        # run through send buffer to send
         try:
             #if(c.send_sms(server, logon_id, phone_list, send_minutes=20)):
-            if (c.send_sms(server, from_phone, phone_list, send_minutes=20)):
+            if 1 == 1 or (c.send_sms(server, from_phone, phone_list, send_minutes=20)):
                 if not connected:
                     #server.connect("smtp.gmail.com", 587)
                     pass
@@ -85,7 +85,8 @@ while (True):
             #c.send_sms(server, logon_id, phone_list, send_minutes=20)
 
     print(time.ctime())
-    print("--------",c.last_sent)
+    # print("--------",c.last_sent)
+    #print("--------",c.send_buffer)
     for str_key,coin in coin_list.items():
         coin.refresh()
 
