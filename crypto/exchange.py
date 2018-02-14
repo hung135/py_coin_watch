@@ -109,40 +109,53 @@ class Exchange:
         if self.exchange_name == self.EX_CRYPTOPIA:
             from crypto import Api
             assert isinstance(self.conn, Api)
-            json = self.conn.get_markets()
-            print(json)
+            json = self.conn.get_tradepairs()[0]
+            # print(str(json)[:200])
             import time
-            time.sleep(60)
-            for m in json['pairs']:
-                self.all_ticker.append(m)
+
+            for val in json:
+                # print(str(val))
+                coin = {"symbol": val['Symbol'], "name": val['BaseSymbol'], "market": val['Label'], "price": 0}
+                self.all_ticker[val['Label']] = coin
+
         if self.exchange_name == 'YOBIT':
             import YoBit
             assert isinstance(self.conn, YoBit.YoBit)
-            json = self.conn.info()
-            for m in json['pairs']:
-                self.all_ticker.append(m)
+            json = self.conn.ticker()['pairs']
+
+            for key, val in json.items():
+                # print(str(val))
+                coin = {"symbol": key, "name": key, "market": key, "price": 0}
+                self.all_ticker[key] = coin
 
         if self.exchange_name == 'POLONIEX':
             from poloniex import Poloniex
             assert isinstance(self.conn, Poloniex)
             json = dict(self.conn.returnTicker())
-            for m in json:
+            for m in json.items():
                 self.all_ticker.append(m)
 
-        if self.exchange_name == 'BINANCE':
+        if self.exchange_name == self.EX_BINANCE:
+
+            dict_set = set()
             from binance.client import Client as BinanceClient
             assert isinstance(self.conn, BinanceClient)
-            json = self.conn.get_all_tickers()
-            for m in json:
-                self.all_ticker.append(m['symbol'])
-        if self.exchange_name == 'BITTREX':
+            json = self.conn.get_products()
+
+            for val in json['data']:
+                # print(val)
+                coin = {"symbol": val['baseAsset'], "name": val['baseAssetName'], "market": val['symbol'], "price": 0}
+
+                self.all_ticker[val['symbol']] = coin
+
+        if self.exchange_name == self.EX_BITTREX:
             from bittrex import Bittrex, API_V2_0
             assert isinstance(self.conn, Bittrex)
             summary = self.conn.get_markets()
 
             for m in summary['result']:
                 self.all_ticker.append(m['MarketName'])
-
+        return self.all_ticker
     # Custom lock for each exchange to get pricing JSON data
     def get_coin_data_json(self, coin):
         json = {}
@@ -255,7 +268,7 @@ class Exchange:
         self.market_pattern = "{0}-{1}"
         self.my_coin_market = []
         self.my_hodl = {}
-        self.all_ticker = []
+        self.all_ticker = dict()  #symbol,coin name, marketsymbol
         self.my_coins = dict()
         self.key_api = api_key
         self.key_secret = secret_key

@@ -61,7 +61,8 @@ phone_list.append(phone)
 sleep_time=60
 last_sent=None
 while (True):
-    os.system('clear')
+    # os.system('clear')
+    scrape.news_list(yobit)
     connected=False
     print(datetime.datetime.utcnow())
     print(Coin.get_table_header())
@@ -79,7 +80,7 @@ while (True):
         # run through send buffer to send
         try:
             #if(c.send_sms(server, logon_id, phone_list, send_minutes=20)):
-            if  (c.send_sms(server, from_phone, phone_list, send_minutes=20)):
+            if 1 == 1 or (c.send_sms(server, from_phone, phone_list, send_minutes=20)):
                 if not connected:
                     #server.connect("smtp.gmail.com", 587)
                     pass

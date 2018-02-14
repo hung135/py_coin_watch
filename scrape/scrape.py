@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup, element
 import urllib
 # urllib.parse.unquote(url)
 import datetime
+import crypto.exchange
 
 
 def get_news(coin_name, coin_symbol):
@@ -52,3 +53,9 @@ def get_news(coin_name, coin_symbol):
             {'data_coin': atag['data-coin'], 'data_date': atag['data-date'], 'data_title': atag['data-title']})
 
     return data_list
+
+
+class news_list():
+    def __init__(self, ex):
+        assert isinstance(ex, crypto.exchange.Exchange)
+        print(ex.get_all_ticker(), "-------")
