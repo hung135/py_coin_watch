@@ -1,7 +1,10 @@
-import smtplib, os, datetime, time,sys
+import os, datetime, time,sys
 from crypto import Exchange, Rule, Coin
 from twilio import rest as TwilioClient
 from crypto.symbol import SymbolStruct
+
+
+
 
 # Establish a secure session with gmail's outgoing SMTP server using your gmail account
 # server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -14,28 +17,32 @@ binance_api = os.getenv('api_key')
 binacne_secret = os.getenv('secret_key')
 twilio_sid=os.getenv('twilio_sid')
 twilio_token=os.getenv('twilio_token')
+cryptopia_api =os.getenv('cryptopia_api')
+cryptopia_secret=os.getenv('cryptopia_secret')
 
-print(logon_id)
-#print(logon_pwd)
-#server.login(logon_id, logon_pwd)
 
 server = TwilioClient.Client(twilio_sid,twilio_token)
 phone = os.getenv('phone')
 from_phone = os.getenv('from_phone')
-
+cryptopia = Exchange(cryptopia_api, cryptopia_secret,Exchange.EX_CRYPTOPIA)
 binance = Exchange(binance_api, binacne_secret, Exchange.EX_BINANCE)
 bittrex = Exchange(binance_api, binacne_secret, Exchange.EX_BITTREX)
+
+yobit = Exchange(binance_api, binacne_secret, Exchange.EX_YOBIT)
+
+poloniex = Exchange(binance_api, binacne_secret, Exchange.EX_POLONIEX)
 binance.add_coin_symbol('ICX','BTC',all_exchange=False)
 binance.add_coin_symbol('VEN','BTC',all_exchange=False)
 
 binance.add_coin_symbol('TRX','BTC',all_exchange=False)
 
 binance.add_coin_symbol('NANO','BTC',all_exchange=False)
-binance.add_coin_symbol('ADA','BTC',all_exchange=True)
+binance.add_coin_symbol('ADA','BTC',all_exchange=False)
 
-binance.add_coin_symbolV2(SymbolStruct('ETH', 0, 'BTC', '<<<', all_exchange=True))
-binance.add_coin_symbolV2(SymbolStruct('ETC', 0, 'BTC', '<<<', all_exchange=True))
+binance.add_coin_symbolV2(SymbolStruct('DGD', 0, 'BTC', '<<<', all_exchange=False))
+cryptopia.add_coin_symbolV2(SymbolStruct('ZCL', 0, 'BTC', '<<<', all_exchange=False))
 
+poloniex.add_coin_symbolV2(SymbolStruct('SC', 0, 'BTC', '<<<', all_exchange=False))
 
 
 
@@ -45,8 +52,9 @@ binance.add_coin_symbolV2(SymbolStruct('ETC', 0, 'BTC', '<<<', all_exchange=True
 
 coin_list = binance.create_coin_market()
 coin_list.update(bittrex.create_coin_market())
-#coin_list.update(poloniex.create_coin_market())
-#coin_list.update(yobit.create_coin_market())
+coin_list.update(poloniex.create_coin_market())
+coin_list.update(yobit.create_coin_market())
+coin_list.update((cryptopia.create_coin_market()))
 phone_list = []
 phone_list.append(phone)
 
@@ -71,7 +79,7 @@ while (True):
         # run through send buffer to send
         try:
             #if(c.send_sms(server, logon_id, phone_list, send_minutes=20)):
-            if 1 == 1 or (c.send_sms(server, from_phone, phone_list, send_minutes=20)):
+            if  (c.send_sms(server, from_phone, phone_list, send_minutes=20)):
                 if not connected:
                     #server.connect("smtp.gmail.com", 587)
                     pass

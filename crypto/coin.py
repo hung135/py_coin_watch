@@ -11,7 +11,7 @@ class Coin:
     send_buffer = dict()
     last_sent = dict()
     rule_list = set()
-    rule_threshhold = 1
+    rule_threshhold = .45
 
     def __init__(self, symbol,basemarket, exchange_obj,hodl=0):
         assert isinstance(exchange_obj, crypto.Exchange)
@@ -19,6 +19,7 @@ class Coin:
         self.bid = 0
         self.sell = 0
         self.last = 0
+        self.error_msg = None
 
         self.symbol = symbol
         self.basemarket = basemarket
@@ -37,17 +38,16 @@ class Coin:
         self.refresh()
 
     def fill_data(self, json):
+        assert isinstance(json,dict)
+        assert isinstance(self.exchange_conn.exchange_map,dict)
 
-        if type(json) is not dict:
-            raise Exception("json must be type dict")
-
-        if type(self.exchange_conn.exchange_map) is not dict:
-            raise Exception("exchange_map must be type dict")
         # looks through json and pulls fields that matches the mapping and set the instance variable
 
         for key, val in self.exchange_conn.exchange_map.items():
+
             value = json.get(val, 0)
             if value != 0:
+
                 setattr(self, key, value)
         self.low_percent = float(crypto.Rule.get_delta_24hr_low(self))
         self.high_percent = float(crypto.Rule.get_delta_24hr_high(self))
@@ -103,7 +103,7 @@ class Coin:
 
     @staticmethod
     def get_table_header():
-        template = "{}{}{}{}{}{}{}{}{}{}{}"
+        template = "{}{}{}{}{}{}{}{}{}{}{}{}"
         txt = template.format(
             str("EXCHANGE").ljust(10, ' '),
             str("COIN").ljust(10, ' '),
@@ -115,12 +115,13 @@ class Coin:
             str("%FromLOW").ljust(10, ' '),
             str("%FromHIGH").ljust(10, ' '),
             str("BTC").ljust(10, ' '),
-            str("HOLD").ljust(10, ' ')
+            str("HOLD").ljust(10, ' '),
+            str("ERRMSG").ljust(10, ' ')
         )
         return txt
 
     def get_formatted_table_row(self):
-        template = "{}{}{}{}{}{}{}{}{}{}{}"
+        template = "{}{}{}{}{}{}{}{}{}{}{}{}"
         sat = 100000000
         btc = 0.0
         try:
@@ -145,7 +146,8 @@ class Coin:
 
             str(round(self.high_percent, 2)).ljust(10, ' '),
             str(btc).ljust(7, ' '),
-            str(self.hodl).ljust(10, ' ')
+            str(self.hodl).ljust(10, ' '),
+            self.error_msg
         )
         return txt
 

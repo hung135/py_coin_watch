@@ -5,29 +5,37 @@ from crypto.symbol import SymbolStruct
 # Create json to variable mapping for each crypto
 BITTREX_MAP = {'bid': 'Bid', 'sell': 'Ask', 'price_high_24hr': 'High', 'last': 'Last', 'price_low_24hr': 'Low',
                'market': 'MarketName', 'total_buy': 'OpenBuyOrders', 'total_sell': 'OpenSellOrders',
-               'price_yesterday': 'PrevDay', 'volume': 'Volume'
+               'price_yesterday': 'PrevDay', 'volume': 'Volume', 'error_msg': 'error_msg'
 
                }
 BINANCE_MAP = {'market': 'symbol', 'bid': 'bidPrice', 'sell': 'askPrice', 'price_high_24hr': 'highPrice',
-               'volume': 'volume', 'price_low_24hr': 'lowPrice', 'price_yesterday': 'prevClosePrice'
+               'volume': 'volume', 'price_low_24hr': 'lowPrice', 'price_yesterday': 'prevClosePrice',
+               'error_msg': 'error_msg'
 
                }
 POLONIEX_MAP = {'market': 'symbol', 'bid': 'highestBid', 'sell': 'lowestAsk', 'price_high_24hr': 'high24hr',
                 'volume': 'baseVolume', 'price_low_24hr': 'low24hr'  # , 'price_yesterday': 'prevClosePrice'
-    , 'weightedAvgPrice': 'weightedAvgPrice'}
+    , 'weightedAvgPrice': 'weightedAvgPrice'
+    , 'error_msg': 'error_msg'}
 YOBIT_MAP = {
 
-    'bid': 'buy', 'sell': 'sell', 'price_high_24hr': 'high', 'volume': 'vol', 'price_low_24hr': 'low'
+    'bid': 'buy', 'sell': 'sell', 'price_high_24hr': 'high', 'volume': 'vol', 'price_low_24hr': 'low', 'error_msg': 'error_msg'
     # , 'price_yesterday': 'prevClosePrice'
 
 }
+CRYPTOPIA_MAP = {
 
+    'bid': 'BidPrice', 'sell': 'AskPrice', 'price_high_24hr': 'High', 'volume': 'Volume', 'price_low_24hr': 'Low', 'error_msg': 'error_msg'
+     , 'price_yesterday': 'Close'
+}
 
 class Exchange:
     EX_BINANCE = 'BINANCE'
     EX_BITTREX = 'BITTREX'
     EX_POLONIEX = 'POLONIEX'
     EX_YOBIT = 'YOBIT'
+    EX_CRYPTOPIA = 'CRYPTOPIA'
+    COIN_NO_FOUND = 'COIN NOT FOUND'
     msg = "{}->{} Price {} Vol {}"
     # market_pattern = None
     # key_api = None
@@ -63,14 +71,20 @@ class Exchange:
     def _get_conn(self):
         connection_obj = None
         client_obj = None
+
         if self.exchange_name == 'BINANCE':
             from binance.client import Client as BinanceClient
             client_obj = BinanceClient
             self.market_pattern = "{}BTC"
             self.market_pattern2 = "{0}{1}"
+        elif self.exchange_name == 'CRYPTOPIA':
+            self.market_pattern = "{}/BTC"
+            self.market_pattern2 = "{0}/{1}"
+            from crypto import Api as CryptopiaClient
+            client_obj = CryptopiaClient
         elif self.exchange_name == 'YOBIT':
             self.market_pattern = "{}_btc"
-            self.market_pattern2 = "{0}{1}"
+            self.market_pattern2 = "{0}_{1}"
             import YoBit
             client_obj = YoBit.YoBit
         elif self.exchange_name == 'POLONIEX':
@@ -92,7 +106,15 @@ class Exchange:
         return connection_obj
 
     def get_all_ticker(self):
-
+        if self.exchange_name == self.EX_CRYPTOPIA:
+            from crypto import Api
+            assert isinstance(self.conn, Api)
+            json = self.conn.get_markets()
+            print(json)
+            import time
+            time.sleep(60)
+            for m in json['pairs']:
+                self.all_ticker.append(m)
         if self.exchange_name == 'YOBIT':
             import YoBit
             assert isinstance(self.conn, YoBit.YoBit)
@@ -126,25 +148,56 @@ class Exchange:
         json = {}
         assert isinstance(coin, Coin)
         # print("getcoindata",Coin.market,Coin.exchange_name)
+        if self.exchange_name == 'CRYPTOPIA':
+            self.exchange_map = CRYPTOPIA_MAP
+            from crypto import Api
+            assert isinstance(self.conn, Api)
+            #if self.mulptile_pairs_json is None:
+            json ,error = self.conn.get_markets()
+            #self.mulptile_pairs_json=json
+            found=False
+            for x in json:
+                if(x['Label']==coin.market):
+                    json=dict(x)
+                    found=True
+                    break
+
+            if not found:
+                json = dict({'error_msg': self.COIN_NO_FOUND})
         if self.exchange_name == 'YOBIT':
             self.exchange_map = YOBIT_MAP
             import YoBit
             assert isinstance(self.conn, YoBit.YoBit)
-            json = self.conn.ticker(coin.market)[coin.market]
+            json = self.conn.ticker(coin.market)
+            assert isinstance(json, dict)
+            if json.get('success', 1) == 1:
+                json = json[coin.market.lower()]
+
+            else:
+                json = dict({'error_msg': self.COIN_NO_FOUND})
+
 
         if self.exchange_name == 'POLONIEX':
             self.exchange_map = POLONIEX_MAP
             from poloniex import Poloniex
             assert isinstance(self.conn, Poloniex)
-            json = dict(self.conn.returnTicker()[coin.market])
+            json = dict(self.conn.returnTicker())
+            # print(json,coin.market)
+            if json.get(coin.market, 0) != 0:
+                json = dict(json.get(coin.market))
+            else:
+                json = dict({'error_msg': self.COIN_NO_FOUND})
 
         if self.exchange_name == 'BINANCE':
+            self.exchange_map = BINANCE_MAP
             try:
-
+                from binance.client import Client
+                assert isinstance(self.conn, Client)
                 json = self.conn.get_ticker(symbol=coin.market)
             except Exception as e:
-                print("Error getting coin data:{}".format(coin.market))
-            self.exchange_map = BINANCE_MAP
+                json = dict({'error_msg': self.COIN_NO_FOUND})
+
+
 
         if self.exchange_name == 'BITTREX':
             self.exchange_map = BITTREX_MAP
@@ -152,11 +205,13 @@ class Exchange:
             assert isinstance(self.conn, Bittrex)
 
             summary = self.conn.get_market_summary(coin.market)
-
-            for m in summary['result']:
-
-                if m['MarketName'] == coin.market:
-                    json = m
+            # print(summary,coin.market)
+            if summary.get('success', False) == 'True':
+                for m in summary.get('result', {}):
+                    if m.get('MarketName', None) == coin.market:
+                        json = m
+            else:
+                json = dict({'error_msg': self.COIN_NO_FOUND})
 
         return json
 
@@ -206,7 +261,7 @@ class Exchange:
         self.key_secret = secret_key
         self.exchange_name = exchange
         self.conn = self._get_conn()
-
+        self.mulptile_pairs_json=None # will be used to store exchanges that don't give json for a single coin
         # self.my_coins = self._get_my_coins()
         # self.get_all_ticker()
         print("Connected To:", exchange, self.all_exchange)

@@ -37,7 +37,7 @@ class Rule():
     def check_24hr_low(coin):
         assert isinstance(coin, Coin)
         send = False
-        if float(coin.low_percent) < coin.rule_threshhold:
+        if float(coin.low_percent) < coin.rule_threshhold and float(coin.low_percent) >0.0:
             send = True
         # print(coin.market, send,'low',float(coin.low_percent),threshold_percent)
         return send
@@ -47,7 +47,7 @@ class Rule():
         assert isinstance(coin, Coin)
         send = False
 
-        if float(coin.high_percent) < coin.rule_threshhold:
+        if float(coin.high_percent) < coin.rule_threshhold and float(coin.high_percent) >0.0:
             send = True
         # print(coin.market,send,'High',float(coin.high_percent),threshold_percent)
         return send
