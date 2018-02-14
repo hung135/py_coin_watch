@@ -2,7 +2,7 @@ import os, datetime, time,sys
 from crypto import Exchange, Rule, Coin
 from twilio import rest as TwilioClient
 from crypto.symbol import SymbolStruct
-
+import scrape
 
 
 
@@ -104,10 +104,11 @@ while (True):
     sys.stdout.write("|\n")
     sys.stdout.flush()
     sys.stdout.write("|")
-
+    # print(scrape.get_news('TRON', 'TRX'))
     for l in range(sleep_time):
 
         sys.stdout.write(">")
         sys.stdout.flush()
         time.sleep(1)
 # While loop
+
