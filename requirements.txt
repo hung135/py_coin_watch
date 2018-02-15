@@ -6,4 +6,5 @@ twilio
 requests>=2.18.1
 pandas
 urllib3
-BeautifulSoup
+bs4
+sqlalchemy

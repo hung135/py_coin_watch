@@ -20,7 +20,7 @@ class Coin:
         self.sell = 0
         self.last = 0
         self.error_msg = None
-
+        self.name = symbol #Common nname
         self.symbol = symbol
         self.basemarket = basemarket
         self.market = exchange_obj.market_pattern2.format(self.symbol, self.basemarket)

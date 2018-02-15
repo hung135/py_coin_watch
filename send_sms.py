@@ -36,6 +36,7 @@ binance.add_coin_symbol('VEN','BTC',all_exchange=False)
 
 binance.add_coin_symbol('TRX','BTC',all_exchange=False)
 
+yobit.add_coin_symbol('linda','BTC',all_exchange=False)
 binance.add_coin_symbol('NANO','BTC',all_exchange=False)
 binance.add_coin_symbol('ADA','BTC',all_exchange=False)
 
@@ -62,7 +63,7 @@ sleep_time=60
 last_sent=None
 while (True):
     # os.system('clear')
-    scrape.news_list(yobit)
+    #scrape.news_list(yobit)
     connected=False
     print(datetime.datetime.utcnow())
     print(Coin.get_table_header())

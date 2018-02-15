@@ -121,7 +121,7 @@ class Exchange:
         if self.exchange_name == 'YOBIT':
             import YoBit
             assert isinstance(self.conn, YoBit.YoBit)
-            json = self.conn.ticker()['pairs']
+            json = self.conn.info()['pairs']
 
             for key, val in json.items():
                 # print(str(val))
