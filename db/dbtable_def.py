@@ -10,14 +10,20 @@ MetaBase = declarative_base()
 class CoinTbl(MetaBase):
     DbSchema = 'coin_watch'
     __tablename__ = 'coin'
-
     __table_args__ = (UniqueConstraint('name', name='coin_name'), {"schema": DbSchema})
     id = Column(c.Integer, primary_key=True)
     name = Column(c.String, nullable=False)
     symbol = Column(c.String, nullable=False)
     last_sms_msg_sent = Column(c.String, nullable=True)
-    process_start_dtm = Column(c.DateTime, default=None)
-    process_end_dtm = Column(c.DateTime, default=None)
+
+class CoinPriceTbl(MetaBase):
+    DbSchema = 'coin_watch'
+    __tablename__ = 'coin_price'
+    __table_args__ = ( {"schema": DbSchema})
+    id = Column(c.Integer, primary_key=True)
+    coin_id = Column(c.Integer)
+    coin_date = Column(c.DateTime)
+    coin_price = Column(c.Float)
 
 
 class ErrorLogTbl(MetaBase):

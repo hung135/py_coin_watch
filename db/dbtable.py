@@ -4,6 +4,7 @@ from sqlalchemy import MetaData
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import CreateSchema
+import sqlalchemy
 
 from .dbtable_def import CoinTbl, MetaBase, ErrorLogTbl
 
@@ -45,6 +46,7 @@ class RecordKeeper():
             pass
 
         # create tables
+        assert isinstance(MetaBase, sqlalchemy.ext.declarative.api.DeclarativeMeta)
         MetaBase.metadata.create_all(bind=self.engine)
 
         # create session
@@ -56,11 +58,11 @@ class RecordKeeper():
         self.metadata = MetaData()
         self.metadata.reflect(bind=self.engine)
 
-    def add_record(self, table, commit=False):
+    def add_record(self, row_obj, commit=False):
 
         # add row to database
 
-        self.session.add(table)
+        self.session.add(row_obj)
 
         if commit:
             try:
@@ -68,6 +70,7 @@ class RecordKeeper():
 
             except Exception as e:
                 logging.error(e)
+                logging.debug(e)
                 print(e)
                 self.session.rollback()
 
@@ -85,7 +88,8 @@ class RecordKeeper():
     def commit(self):
         try:
             self.session.commit()
-        except:
+        except Exception as e:
+            logging.error(e)
             self.session.rollback()
 
     def __del__(self):

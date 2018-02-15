@@ -218,8 +218,8 @@ class Exchange:
             assert isinstance(self.conn, Bittrex)
 
             summary = self.conn.get_market_summary(coin.market)
-            # print(summary,coin.market)
-            if summary.get('success', False) == 'True':
+            #print(summary,coin.market)
+            if summary.get('success', False) == True:
                 for m in summary.get('result', {}):
                     if m.get('MarketName', None) == coin.market:
                         json = m

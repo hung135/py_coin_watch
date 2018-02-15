@@ -38,7 +38,7 @@ binance.add_coin_symbol('TRX','BTC',all_exchange=False)
 
 yobit.add_coin_symbol('linda','BTC',all_exchange=False)
 binance.add_coin_symbol('NANO','BTC',all_exchange=False)
-binance.add_coin_symbol('ADA','BTC',all_exchange=False)
+bittrex.add_coin_symbol('ZCL','BTC',all_exchange=False)
 
 binance.add_coin_symbolV2(SymbolStruct('DGD', 0, 'BTC', '<<<', all_exchange=False))
 cryptopia.add_coin_symbolV2(SymbolStruct('ZCL', 0, 'BTC', '<<<', all_exchange=False))
@@ -53,9 +53,9 @@ poloniex.add_coin_symbolV2(SymbolStruct('SC', 0, 'BTC', '<<<', all_exchange=Fals
 
 coin_list = binance.create_coin_market()
 coin_list.update(bittrex.create_coin_market())
-coin_list.update(poloniex.create_coin_market())
-coin_list.update(yobit.create_coin_market())
-coin_list.update((cryptopia.create_coin_market()))
+# coin_list.update(poloniex.create_coin_market())
+# coin_list.update(yobit.create_coin_market())
+# coin_list.update((cryptopia.create_coin_market()))
 phone_list = []
 phone_list.append(phone)
 
@@ -81,7 +81,7 @@ while (True):
         # run through send buffer to send
         try:
             #if(c.send_sms(server, logon_id, phone_list, send_minutes=20)):
-            if 1 == 1 or (c.send_sms(server, from_phone, phone_list, send_minutes=20)):
+            if   (c.send_sms(server, from_phone, phone_list, send_minutes=20)):
                 if not connected:
                     #server.connect("smtp.gmail.com", 587)
                     pass
