@@ -122,7 +122,12 @@ class Coin:
 
     def get_formatted_table_row(self):
         template = "{}{}{}{}{}{}{}{}{}{}{}{}"
-        sat = 100000000
+        if self.basemarket=='USDT':
+            sat = 1
+            buyprice="$"+str(round(float(self.bid) * sat)).ljust(12, ' ')
+        else:
+            sat = 100000000
+            buyprice=str(round(float(self.bid) * sat)).ljust(12, ' ')
         btc = 0.0
         try:
             btc = round(float(self.hodl) * float(self.bid), 3)
@@ -130,8 +135,8 @@ class Coin:
             btc = 0.0
         txt = template.format(
             str(self.exchange_name).ljust(10, ' '),
-            str(self.symbol).ljust(10, ' '),
-            str(round(float(self.bid) * sat)).ljust(12, ' '),
+            str("{}-{}".format(self.symbol,self.basemarket)).ljust(10, ' '),
+            buyprice,
             str(round(float(self.sell) * sat)).ljust(12, ' '),
 
             # str(self.sell).ljust(12, ' '),
@@ -153,7 +158,7 @@ class Coin:
 
     def get_sms_msg(self):
         return self.msg.format(self.exchange_name,
-                               self.symbol.ljust(6, ' '),
+                               self.market.ljust(6, ' '),
                                str(self.bid).ljust(10, ' '),
                                str(self.sell).ljust(10, ' '),
                                str(self.price_yesterday).ljust(10, ' '),

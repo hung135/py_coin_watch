@@ -94,7 +94,8 @@ class Exchange:
             self.market_pattern2 = "{1}_{0}"
             connection_obj = PoloniexClient()
         elif self.exchange_name == 'BITTREX':
-            from bittrex import Bittrex as BittrexClient, API_V2_0
+            from bittrex import Bittrex as BittrexClient
+            #, API_V2_0
             # my_bittrex = Bittrex(None, None, api_version=API_V2_0)  # or defaulting to v1.1 as Bittrex(None, None)
             client_obj = BittrexClient
             self.market_pattern = "BTC-{}"
@@ -149,7 +150,7 @@ class Exchange:
                 self.all_ticker[val['symbol']] = coin
 
         if self.exchange_name == self.EX_BITTREX:
-            from bittrex import Bittrex, API_V2_0
+            from bittrex import Bittrex #, API_V2_0
             assert isinstance(self.conn, Bittrex)
             summary = self.conn.get_markets()
 
@@ -214,7 +215,7 @@ class Exchange:
 
         if self.exchange_name == 'BITTREX':
             self.exchange_map = BITTREX_MAP
-            from bittrex import Bittrex, API_V2_0
+            from bittrex import Bittrex #, API_:w
             assert isinstance(self.conn, Bittrex)
 
             summary = self.conn.get_market_summary(coin.market)
