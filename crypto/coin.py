@@ -77,11 +77,18 @@ class Coin:
             if (r(self)):
                 # server.sendmail(sender, phone, self.get_sms_msg())
                 # print(self.last_sent,last_time_threshold)
+                #find the record of the last time sent
+                last_sent_dict=self.last_sent.get(self.symbol+self.basemarket, None)
+                price_delta=0
+                if last_sent_dict:
+                    price_delta=(float(last_sent_dict["sent_price"])) - float(self.bid)
 
-                if self.last_sent.get(self.symbol+self.basemarket, None) is None or send:
+                #print(last_sent_dict,"---")
+                if last_sent_dict is None or send:
                     send = True
 
-                elif self.last_sent[self.symbol+self.basemarket] < last_time_threshold:
+                elif last_sent_dict["sent_time"] < last_time_threshold\
+                            and  price_delta>0:
                     send = True
                     print("SendingAgain {}:".format(send_minutes))
                 else:
@@ -89,7 +96,8 @@ class Coin:
         if send:
             from twilio.rest import Client
             assert isinstance(server, Client)
-            self.last_sent[self.symbol+self.basemarket] = datetime.datetime.now()
+            self.last_sent[self.symbol+self.basemarket] = {"sent_time":datetime.datetime.now()
+                                                           ,"sent_price":self.bid}
             for phone in phone_list:
                 # server.sendmail(sender, phone, self.get_sms_msg())
                 message = server.messages.create(
