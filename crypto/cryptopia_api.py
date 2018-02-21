@@ -55,7 +55,7 @@ class Api(object):
                 except requests.exceptions.RequestException as ex:
                     return None, "Status Code : " + str(ex)
             req = req.json()
-            if 'Success' in req and req['Success'] is True:
+            if req is not None and 'Success' in req and req['Success'] is True:
                 result = req['Data']
                 error = None
             else:

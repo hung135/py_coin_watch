@@ -215,9 +215,9 @@ class Exchange:
 
         if self.exchange_name == 'BITTREX':
             self.exchange_map = BITTREX_MAP
-            from bittrex import Bittrex #, API_:w
+            from bittrex.bittrex import Bittrex
             assert isinstance(self.conn, Bittrex)
-
+            #print(self.conn)
             summary = self.conn.get_market_summary(coin.market)
             #print(summary,coin.market)
             if summary.get('success', False) == True:

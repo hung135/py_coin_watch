@@ -37,6 +37,7 @@ binance.add_coin_symbol('BTC','USDT',all_exchange=False)
 binance.add_coin_symbol('TRX','BTC',all_exchange=False)
 
 poloniex.add_coin_symbol('SC','BTC',all_exchange=False)
+binance.add_coin_symbol('WABI','BTC',all_exchange=True)
 
 binance.add_coin_symbol('ADA','BTC',all_exchange=True)
 binance.add_coin_symbol('NANO','BTC',all_exchange=False)
