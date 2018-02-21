@@ -182,7 +182,10 @@ class Exchange:
             self.exchange_map = YOBIT_MAP
             import YoBit
             assert isinstance(self.conn, YoBit.YoBit)
-            json = self.conn.ticker(coin.market)
+            try:
+                json = self.conn.ticker(coin.market)
+            except:
+                json = {'success',0}
             assert isinstance(json, dict)
             if json.get('success', 1) == 1:
                 json = json[coin.market.lower()]
