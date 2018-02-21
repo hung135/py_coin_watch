@@ -26,7 +26,7 @@ phone = os.getenv('phone')
 from_phone = os.getenv('from_phone')
 cryptopia = Exchange(cryptopia_api, cryptopia_secret,Exchange.EX_CRYPTOPIA)
 binance = Exchange(binance_api, binacne_secret, Exchange.EX_BINANCE)
-bittrex = Exchange(binance_api, binacne_secret, Exchange.EX_BITTREX)
+#bittrex = Exchange(binance_api, binacne_secret, Exchange.EX_BITTREX)
 
 yobit = Exchange(binance_api, binacne_secret, Exchange.EX_YOBIT)
 
@@ -41,7 +41,7 @@ binance.add_coin_symbol('WABI','BTC',all_exchange=True)
 
 binance.add_coin_symbol('ADA','BTC',all_exchange=True)
 binance.add_coin_symbol('NANO','BTC',all_exchange=False)
-bittrex.add_coin_symbol('ZCL','BTC',all_exchange=False)
+#bittrex.add_coin_symbol('ZCL','BTC',all_exchange=False)
 
 binance.add_coin_symbolV2(SymbolStruct('DGD', 0, 'BTC', '<<<', all_exchange=False))
 cryptopia.add_coin_symbolV2(SymbolStruct('ZCL', 0, 'BTC', '<<<', all_exchange=False))
@@ -55,7 +55,7 @@ poloniex.add_coin_symbolV2(SymbolStruct('SC', 0, 'BTC', '<<<', all_exchange=Fals
 
 
 coin_list = binance.create_coin_market()
-coin_list.update(bittrex.create_coin_market())
+#coin_list.update(bittrex.create_coin_market())
 coin_list.update(poloniex.create_coin_market())
 coin_list.update(yobit.create_coin_market())
 coin_list.update((cryptopia.create_coin_market()))
