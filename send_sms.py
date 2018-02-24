@@ -65,7 +65,7 @@ phone_list.append(phone)
 sleep_time=60
 last_sent=None
 while (True):
-    # os.system('clear')
+    os.system('clear')
     #scrape.news_list(yobit)
     connected=False
     print(datetime.datetime.utcnow())
