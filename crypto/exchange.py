@@ -177,9 +177,11 @@ class Exchange:
                         json=dict(x)
                         found=True
                         break
+                if not found:
+                    json = dict({'error_msg': self.COIN_NO_FOUND})
+            else:
+                json = dict({'error_msg': error})
 
-            if not found:
-                json = dict({'error_msg': self.COIN_NO_FOUND})
         if self.exchange_name == 'YOBIT':
             self.exchange_map = YOBIT_MAP
             import YoBit
