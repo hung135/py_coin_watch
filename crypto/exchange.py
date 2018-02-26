@@ -171,7 +171,7 @@ class Exchange:
             #self.mulptile_pairs_json=json
 
             found=False
-            if error is None:
+            if error is None and json is not None:
                 for x in json:
                     if(x['Label']==coin.market):
                         json=dict(x)
