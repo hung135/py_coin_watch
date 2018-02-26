@@ -169,12 +169,14 @@ class Exchange:
             #if self.mulptile_pairs_json is None:
             json ,error = self.conn.get_markets()
             #self.mulptile_pairs_json=json
+
             found=False
-            for x in json:
-                if(x['Label']==coin.market):
-                    json=dict(x)
-                    found=True
-                    break
+            if error is None:
+                for x in json:
+                    if(x['Label']==coin.market):
+                        json=dict(x)
+                        found=True
+                        break
 
             if not found:
                 json = dict({'error_msg': self.COIN_NO_FOUND})
