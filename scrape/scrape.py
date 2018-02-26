@@ -10,6 +10,7 @@ import crypto.exchange
 
 def get_news(coin_name, coin_symbol):
     # 14/02/2018
+    print("Scraping:",coin_name,coin_symbol)
     start_date = datetime.datetime.now()
     end_date = start_date + datetime.timedelta(days=20)
     coin_list = dict()
@@ -52,7 +53,7 @@ def get_news(coin_name, coin_symbol):
         data_list.append(
             {'data_coin': atag['data-coin'], 'data_date': atag['data-date'], 'data_title': atag['data-title']})
 
-    return data_list
+    return data_list,coin_symbol
 
 
 class news_list():

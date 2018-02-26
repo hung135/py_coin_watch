@@ -4,9 +4,10 @@ poloniex
 YoBit
 twilio
 requests>=2.18.1
-#pandas
+pandas
 urllib3
 bs4
 sqlalchemy
 dask
 distributed
+arrow

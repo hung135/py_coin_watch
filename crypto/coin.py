@@ -4,10 +4,10 @@ import pprint as pp
 import smtplib
 
 import crypto
-
+import arrow
 
 class Coin:
-    msg = "{}->{}\nB{}\nA{} \nPrev {}\nL {}\nH {}\nL{}% H{}%\nQTY {}"
+    msg = "{}->{}\nB{}\nA{} \nPrev {}\nL {}\nH {}\nL{}% H{}%\nQTY {}\NEWS{}"
     send_buffer = dict()
     last_sent = dict()
     rule_list = set()
@@ -36,6 +36,7 @@ class Coin:
         self.rule_list.add(crypto.Rule.check_24hr_low)
         self.rule_list.add(crypto.Rule.check_24hr_high)
         self.refresh()
+        self.news_feed=None
 
     def fill_data(self, json):
         assert isinstance(json,dict)
@@ -51,6 +52,9 @@ class Coin:
                 setattr(self, key, value)
         self.low_percent = float(crypto.Rule.get_delta_24hr_low(self))
         self.high_percent = float(crypto.Rule.get_delta_24hr_high(self))
+    def set_news(self,news_feed=None):
+        if news_feed is not None:
+            self.news_feed=news_feed
 
     def refresh(self):
         # try:
@@ -63,7 +67,7 @@ class Coin:
                 self.send_buffer[self.symbol + self.basemarket] = list(
                     [datetime.datetime.now(), self.get_sms_msg(), delay_minutes])
 
-    def send_sms(self, server, sender, phone_list, send_minutes=30):
+    def send_sms(self, server, sender, phone_list, send_minutes=30,news = None):
         send = False
         assert isinstance(phone_list, list)
 
@@ -114,7 +118,7 @@ class Coin:
 
     @staticmethod
     def get_table_header():
-        template = "{}{}{}{}{}{}{}{}{}{}{}{}"
+        template = "{}{}{}{}{}{}{}{}{}{}{}{}{}"
         txt = template.format(
             str("EXCHANGE").ljust(10, ' '),
             str("COIN").ljust(10, ' '),
@@ -127,12 +131,13 @@ class Coin:
             str("%FromHIGH").ljust(10, ' '),
             str("BTC").ljust(10, ' '),
             str("HOLD").ljust(10, ' '),
-            str("ERRMSG").ljust(10, ' ')
+            str("ERRMSG").ljust(10, ' '),
+            str("News").ljust(10, ' ')
         )
         return txt
 
     def get_formatted_table_row(self):
-        template = "{}{}{}{}{}{}{}{}{}{}{}{}"
+        template = "{}{}{}{}{}{}{}{}{}{}{}{}{}"
         if self.basemarket=='USDT':
             sat = 1
             buyprice="$"+str(round(float(self.bid) * sat)).ljust(12, ' ')
@@ -144,6 +149,11 @@ class Coin:
             btc = round(float(self.hodl) * float(self.bid), 3)
         except:
             btc = 0.0
+        news=''
+        if self.news_feed is not None:
+            for y in self.news_feed:
+                data_date=arrow.get(y['data_date'], 'D MMMM YYYY').format('MM/DD')
+                news=news+"-" +data_date +":"+ y['data_title']
         txt = template.format(
             str(self.exchange_name).ljust(10, ' '),
             str("{}-{}".format(self.symbol,self.basemarket)).ljust(10, ' '),
@@ -163,11 +173,17 @@ class Coin:
             str(round(self.high_percent, 2)).ljust(10, ' '),
             str(btc).ljust(7, ' '),
             str(self.hodl).ljust(10, ' '),
-            self.error_msg
+            self.error_msg,
+            news
         )
         return txt
 
     def get_sms_msg(self):
+        news=''
+        if self.news_feed is not None:
+            for y in self.news_feed:
+                data_date=arrow.get(y['data_date'], 'D MMMM YYYY').format('MM/DD')
+                news=news+"-" +data_date +":"+ y['data_title']
         return self.msg.format(self.exchange_name,
                                self.market.ljust(6, ' '),
                                str(self.bid).ljust(10, ' '),
@@ -177,4 +193,5 @@ class Coin:
                                str(self.price_high_24hr).ljust(10, ' '),
                                str(round(self.low_percent, 2)).rjust(5, ' '),
                                round(self.high_percent, 2),
-                               self.hodl)
+                               self.hodl,
+                               news)
