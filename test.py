@@ -20,9 +20,9 @@ def scrape_coins():
     l,s = scrape.get_news('Bitcoin', 'BTC')
     news_list[s]=l
     l,s = scrape.get_news('Nano', 'NANO')
-    news_list[s]=l
-    l,s = scrape.get_news('Siacoin', 'SC')
     news_list[s]=l"""
+    l,s = scrape.get_news('Litecoin', 'LTC')
+    news_list[s]=l
     l,s = scrape.get_news('ZClassic', 'ZCL')
     news_list[s]=l
 scrape_coins()
