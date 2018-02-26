@@ -10,7 +10,7 @@ news_list = dict()
 last_scrape = None
 
 def scrape_coins(last_scrape):
-    last_time_threshold = (datetime.datetime.now() - datetime.timedelta(minutes=3))
+    last_time_threshold = (datetime.datetime.now() - datetime.timedelta(minutes=30))
     if last_scrape is None or last_scrape<last_time_threshold:
         l, s = scrape.get_news('TRON', 'TRX')
         news_list[s] = l
