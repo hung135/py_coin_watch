@@ -7,7 +7,7 @@ import crypto
 import arrow
 
 class Coin:
-    msg = "{}->{}\nB{}\nA{} \nPrev {}\nL {}\nH {}\nL{}% H{}%\nQTY {}\NEWS{}"
+    msg = "{}->{}\nB{}\nA{} \nPrev {}\nL {}\nH {}\nL{}% H{}%\nQTY {}\nNEWS{}"
     send_buffer = dict()
     last_sent = dict()
     rule_list = set()
