@@ -183,7 +183,9 @@ class Coin:
         if self.news_feed is not None:
             for y in self.news_feed:
                 data_date=arrow.get(y['data_date'], 'D MMMM YYYY').format('MM/DD')
-                news=news+"-" +data_date +":"+ y['data_title']
+                news=news+"\n" +data_date +":"+ y['data_title']
+        else:
+            news='\nNone'
         return self.msg.format(self.exchange_name,
                                self.market.ljust(6, ' '),
                                str(self.bid).ljust(10, ' '),
