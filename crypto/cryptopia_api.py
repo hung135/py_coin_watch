@@ -48,11 +48,12 @@ class Api(object):
             url = "https://www.cryptopia.co.nz/Api/" + feature_requested + "/" + \
                   ('/'.join(i for i in get_parameters.values()
                             ) if get_parameters is not None else "")
-            req=None
+
             try:
                 req = requests.get(url, params=get_parameters)
             except Exception as e:
                 print("-----Cryptopia api line 54:",e)
+                return None, "Unknown feature"
 
             if req.status_code != 200:
                 try:
