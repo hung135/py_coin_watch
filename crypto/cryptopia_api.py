@@ -51,7 +51,7 @@ class Api(object):
             req=None
             try:
                 req = requests.get(url, params=get_parameters)
-            except:
+            except Exception as e:
                 print("-----Cryptopia api line 54:",e)
 
             if req.status_code != 200:
