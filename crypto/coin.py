@@ -187,7 +187,7 @@ class Coin:
         else:
             news='\nNone'
         return self.msg.format(self.exchange_name,
-                               self.name.ljust(6, ' '),
+                               str(self.name).ljust(6, ' '),
                                str(self.bid).ljust(10, ' '),
                                str(self.sell).ljust(10, ' '),
                                str(self.price_yesterday).ljust(10, ' '),
