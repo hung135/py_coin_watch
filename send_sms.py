@@ -37,6 +37,10 @@ def scrape_coins(last_scrape):
         news_list[s] = l
         l, s = scrape.get_news('Ethereum Classic', 'ETC')
         news_list[s] = l
+        l, s = scrape.get_news('EOS', 'EOS')
+        news_list[s] = l
+        l, s = scrape.get_news('Augur', 'REP')
+        news_list[s] = l
         return datetime.datetime.now()
     return last_scrape
 
@@ -71,7 +75,7 @@ binance.add_coin_symbol('BTC', 'USDT', all_exchange=False)
 binance.add_coin_symbol('TRX', 'BTC', all_exchange=False)
 
 binance.add_coin_symbol('LTC', 'BTC', all_exchange=False)
-
+binance.add_coin_symbol('EOS', 'BTC', all_exchange=False)
 binance.add_coin_symbol('ETC', 'BTC', all_exchange=False)
 
 poloniex.add_coin_symbol('SC', 'BTC', all_exchange=False)
@@ -80,6 +84,7 @@ binance.add_coin_symbol('WABI', 'BTC', all_exchange=False)
 binance.add_coin_symbol('ADA', 'BTC', all_exchange=False)
 binance.add_coin_symbol('NANO', 'BTC', all_exchange=False)
 bittrex.add_coin_symbol('ZCL','BTC',all_exchange=False)
+bittrex.add_coin_symbol('REP','BTC',all_exchange=False)
 bittrex.add_coin_symbol('XVG','BTC',all_exchange=False)
 binance.add_coin_symbolV2(SymbolStruct('DGD', 0, 'BTC', '<<<', all_exchange=False))
 cryptopia.add_coin_symbolV2(SymbolStruct('ZCL', 0, 'BTC', '<<<', all_exchange=False))

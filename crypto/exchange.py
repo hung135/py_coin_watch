@@ -202,12 +202,16 @@ class Exchange:
             self.exchange_map = POLONIEX_MAP
             from poloniex import Poloniex
             assert isinstance(self.conn, Poloniex)
-            json = dict(self.conn.returnTicker())
-            # print(json,coin.market)
-            if json.get(coin.market, 0) != 0:
-                json = dict(json.get(coin.market))
-            else:
+            try:
+                json = dict(self.conn.returnTicker())
+                if json.get(coin.market, 0) != 0:
+                    json = dict(json.get(coin.market))
+                else:
+                    json = dict({'error_msg': self.COIN_NO_FOUND})
+            except Exception as e:
                 json = dict({'error_msg': self.COIN_NO_FOUND})
+            # print(json,coin.market)
+
 
         if self.exchange_name == 'BINANCE':
             self.exchange_map = BINANCE_MAP
