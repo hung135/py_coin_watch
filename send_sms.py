@@ -60,11 +60,10 @@ binance.add_coin_symbol('WABI', 'BTC', all_exchange=False,name='WaBi')
 
 binance.add_coin_symbol('ADA', 'BTC', all_exchange=False,name='Cardano')
 binance.add_coin_symbol('NANO', 'BTC', all_exchange=False,name='Nano')
-bittrex.add_coin_symbol('ZCL','BTC',all_exchange=False,name='Zclassic')
 bittrex.add_coin_symbol('REP','BTC',all_exchange=False,name='Augur')
 bittrex.add_coin_symbol('XVG','BTC',all_exchange=False,name='Verge')
 binance.add_coin_symbolV2(SymbolStruct('DGD', 0, 'BTC', '<<<', all_exchange=False,name='DigixDAO'))
-cryptopia.add_coin_symbolV2(SymbolStruct('ZCL', 0, 'BTC', '<<<', all_exchange=False,name='ZClassic'))
+cryptopia.add_coin_symbolV2(SymbolStruct('LINDA', 0, 'BTC', '<<<', all_exchange=False,name='Linda'))
 
 poloniex.add_coin_symbolV2(SymbolStruct('SC', 0, 'BTC', '<<<', all_exchange=False,name='Siacoin'))
 
