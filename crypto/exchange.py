@@ -242,16 +242,18 @@ class Exchange:
 
     # returns object so we can refresh the data
     def create_coin_market(self):
+
         self.my_coin_market = dict()
 
         for symbol_maket, symbol in self.my_coins.items():
+            #print("-------",symbol)
             # hodl = self.my_hodl.get(symbol, 0)
             hodl = 0
-            self.my_coin_market[symbol_maket] = (  # Coin(symbol_maket, exchange_obj=self, symbol=symbol, hodl=hodl))
-                Coin(symbol[0], symbol[1], self, hodl))
+            self.my_coin_market[symbol_maket] = (  # Coin(symbol_maket, exchange_obj=self, symbol=symbol, hodl=hodl,name))
+                Coin(symbol[0], symbol[1], self, hodl,name=symbol[2]))
         for symbol_maket, symbol in self.all_exchange.items():
             self.my_coin_market[self.market_pattern2.format(symbol[0], symbol[1])] = (
-                Coin(symbol[0], symbol[1], exchange_obj=self, hodl=0))
+                Coin(symbol[0], symbol[1], exchange_obj=self, hodl=0,name=symbol[2]))
 
         return self.my_coin_market
 
@@ -265,13 +267,13 @@ class Exchange:
             assert isinstance(coin_struct, SymbolStruct)
             # market_symbol = self.market_pattern2.format(coin_struct.symbol, coin_struct.basemarket)
             self.my_coins[self.keytemplate.format(coin_struct.symbol, coin_struct.basemarket)] = list(
-                [coin_struct.symbol, coin_struct.basemarket])
+                [coin_struct.symbol, coin_struct.basemarket,coin_struct.name])
 
-    def add_coin_symbol(self, coin_symbol, basemarket, all_exchange=False):
+    def add_coin_symbol(self, coin_symbol, basemarket, all_exchange=False,name=None):
         if (all_exchange):
-            self.all_exchange[self.keytemplate.format(coin_symbol, basemarket)] = list([coin_symbol, basemarket])
+            self.all_exchange[self.keytemplate.format(coin_symbol, basemarket)] = list([coin_symbol, basemarket,name])
         else:
-            self.my_coins[self.keytemplate.format(coin_symbol, basemarket)] = list([coin_symbol, basemarket])
+            self.my_coins[self.keytemplate.format(coin_symbol, basemarket)] = list([coin_symbol, basemarket,name])
 
     # initial all instance variables
     def __init__(self, api_key=None, secret_key=None, exchange='BITTREX'):

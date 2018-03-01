@@ -157,6 +157,7 @@ class Coin:
         txt = template.format(
             str(self.exchange_name).ljust(10, ' '),
             str("{}-{}".format(self.symbol,self.basemarket)).ljust(10, ' '),
+
             buyprice,
             str(round(float(self.sell) * sat)).ljust(12, ' '),
 
