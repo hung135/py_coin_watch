@@ -8,5 +8,5 @@ termcolor
 python-binance
 python-bittrex
 poloniex
-YoBit
+#YoBit
 twilio
