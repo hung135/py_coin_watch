@@ -17,4 +17,5 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install python-requests -y
 after_script:
+  - psql -c 'drop schema coin_test;' -U postgres
   - psql -c 'drop database travis_ci_test;' -U postgres
