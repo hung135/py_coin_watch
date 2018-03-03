@@ -11,4 +11,4 @@ before_script:
   - psql -c 'create schema coin_test;' -U postgres
 before_install:
   - sudo apt-get update
-  - sudo apt-get install python-requests
+  - sudo apt-get install python-requests -y
