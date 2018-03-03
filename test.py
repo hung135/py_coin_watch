@@ -1,9 +1,13 @@
 import unittest
 
-import crypto
+from crypto import Coin, Exchange,Rule
+
 class TestCoin(unittest.TestCase):
     def test_init(self):
-        print("hello")
-        self.assertEqual('s',1)
+        e=Exchange(None,None,Exchange.EX_BINANCE)
+        c=Coin('TRX','BTC',e)
+
+
+        #self.assertEqual('s',1)
 if __name__ == '__main__':
     unittest.main()

@@ -11,8 +11,8 @@ from .dbtable_def import CoinTbl, MetaBase, ErrorLogTbl
 class DbConn():
     def __init__(self):
         self._userid='postgres'
-        self._password='tester'
-        self._host='192.168.99.100' #vagrant macine ip
+        self._password=''
+        self._host='127.0.0.1' #vagrant macine ip
         self._port=5432
         self._database_name='postgres'
         self._schema='coin_watch'
