@@ -11,3 +11,4 @@ sqlalchemy
 dask
 distributed
 arrow
+termcolor

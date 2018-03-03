@@ -30,7 +30,12 @@ class Api(object):
             url = "https://www.cryptopia.co.nz/Api/" + feature_requested
             post_data = json.dumps(post_parameters)
             headers = self.secure_headers(url=url, post_data=post_data)
-            req = requests.post(url, data=post_data, headers=headers)
+            try:
+                req = requests.post(url, data=post_data, headers=headers)
+            except Exception as e:
+                print("-----Cryptopia api line 36:", e)
+                return None, "Unknown feature"
+
             if req.status_code != 200:
                 try:
                     req.raise_for_status()

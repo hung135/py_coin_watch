@@ -13,14 +13,14 @@ class Coin:
     rule_list = set()
     rule_threshhold = .45
 
-    def __init__(self, symbol,basemarket, exchange_obj,hodl=0):
+    def __init__(self, symbol,basemarket, exchange_obj,hodl=0,name=None):
         assert isinstance(exchange_obj, crypto.Exchange)
 
         self.bid = 0
         self.sell = 0
         self.last = 0
         self.error_msg = None
-        self.name = symbol #Common nname
+        self.name = name #Common nname
         self.symbol = symbol
         self.basemarket = basemarket
         self.market = exchange_obj.market_pattern2.format(self.symbol, self.basemarket)
@@ -157,6 +157,7 @@ class Coin:
         txt = template.format(
             str(self.exchange_name).ljust(10, ' '),
             str("{}-{}".format(self.symbol,self.basemarket)).ljust(10, ' '),
+
             buyprice,
             str(round(float(self.sell) * sat)).ljust(12, ' '),
 
@@ -187,7 +188,7 @@ class Coin:
         else:
             news='\nNone'
         return self.msg.format(self.exchange_name,
-                               self.market.ljust(6, ' '),
+                               str(self.name).ljust(6, ' '),
                                str(self.bid).ljust(10, ' '),
                                str(self.sell).ljust(10, ' '),
                                str(self.price_yesterday).ljust(10, ' '),

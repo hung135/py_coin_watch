@@ -9,38 +9,19 @@ import scrape
 news_list = dict()
 last_scrape = None
 
-def scrape_coins(last_scrape):
+def scrape_coins(last_scrape,coin_list=dict()):
+    assert isinstance(coin_list,dict)
     last_time_threshold = (datetime.datetime.now() - datetime.timedelta(minutes=30))
     if last_scrape is None or last_scrape<last_time_threshold:
-        l, s = scrape.get_news('TRON', 'TRX')
-        news_list[s] = l
-        l, s = scrape.get_news('Cardano', 'ADA')
-        news_list[s] = l
-        l, s = scrape.get_news('VeChain', 'VEN')
-        news_list[s] = l
 
-        l, s = scrape.get_news('WaBi', 'WABI')
-        news_list[s] = l
-
-        l, s = scrape.get_news('Bitcoin', 'BTC')
-        news_list[s] = l
-        l, s = scrape.get_news('Nano', 'NANO')
-        news_list[s] = l
-        l, s = scrape.get_news('Siacoin', 'SC')
-        news_list[s] = l
-        l, s = scrape.get_news('ZClassic', 'ZCL')
-        news_list[s] = l
-
-        l, s = scrape.get_news('Verge', 'XVG')
-        news_list[s] = l
-        l, s = scrape.get_news('Litecoin', 'LTC')
-        news_list[s] = l
-        l, s = scrape.get_news('Ethereum Classic', 'ETC')
-        news_list[s] = l
+        for key,value in coin_list.items():
+            assert isinstance(value,Coin)
+            l, s = scrape.get_news(value.name,value.symbol)
+            news_list[s] = l
         return datetime.datetime.now()
     return last_scrape
 
-last_scrape=scrape_coins(None)
+
 # Establish a secure session with gmail's outgoing SMTP server using your gmail account
 # server = smtplib.SMTP("smtp.gmail.com", 587)
 
@@ -65,26 +46,26 @@ bittrex = Exchange(binance_api, binacne_secret, Exchange.EX_BITTREX)
 yobit = Exchange(binance_api, binacne_secret, Exchange.EX_YOBIT)
 
 poloniex = Exchange(binance_api, binacne_secret, Exchange.EX_POLONIEX)
-binance.add_coin_symbol('ICX', 'BTC', all_exchange=False)
-binance.add_coin_symbol('VEN', 'BTC', all_exchange=False)
-binance.add_coin_symbol('BTC', 'USDT', all_exchange=False)
-binance.add_coin_symbol('TRX', 'BTC', all_exchange=False)
+binance.add_coin_symbol('ICX', 'BTC', all_exchange=False,name='ICON')
+binance.add_coin_symbol('VEN', 'BTC', all_exchange=False,name='VeChain')
+binance.add_coin_symbol('BTC', 'USDT', all_exchange=False,name='Bitcoin')
+binance.add_coin_symbol('TRX', 'BTC', all_exchange=False,name='TRON')
 
-binance.add_coin_symbol('LTC', 'BTC', all_exchange=False)
+binance.add_coin_symbol('LTC', 'BTC', all_exchange=False,name='Litecoin')
+binance.add_coin_symbol('EOS', 'BTC', all_exchange=False,name='EOS')
+binance.add_coin_symbol('ETC', 'BTC', all_exchange=False,name='Ethereum Classic')
 
-binance.add_coin_symbol('ETC', 'BTC', all_exchange=False)
+poloniex.add_coin_symbol('SC', 'BTC', all_exchange=False,name='Siacoin')
+binance.add_coin_symbol('WABI', 'BTC', all_exchange=False,name='WaBi')
 
-poloniex.add_coin_symbol('SC', 'BTC', all_exchange=False)
-binance.add_coin_symbol('WABI', 'BTC', all_exchange=False)
+binance.add_coin_symbol('ADA', 'BTC', all_exchange=False,name='Cardano')
+binance.add_coin_symbol('NANO', 'BTC', all_exchange=False,name='Nano')
+bittrex.add_coin_symbol('REP','BTC',all_exchange=False,name='Augur')
+bittrex.add_coin_symbol('XVG','BTC',all_exchange=False,name='Verge')
+binance.add_coin_symbolV2(SymbolStruct('DGD', 0, 'BTC', '<<<', all_exchange=False,name='DigixDAO'))
+cryptopia.add_coin_symbolV2(SymbolStruct('LINDA', 0, 'BTC', '<<<', all_exchange=False,name='Linda'))
 
-binance.add_coin_symbol('ADA', 'BTC', all_exchange=False)
-binance.add_coin_symbol('NANO', 'BTC', all_exchange=False)
-bittrex.add_coin_symbol('ZCL','BTC',all_exchange=False)
-bittrex.add_coin_symbol('XVG','BTC',all_exchange=False)
-binance.add_coin_symbolV2(SymbolStruct('DGD', 0, 'BTC', '<<<', all_exchange=False))
-cryptopia.add_coin_symbolV2(SymbolStruct('ZCL', 0, 'BTC', '<<<', all_exchange=False))
-
-poloniex.add_coin_symbolV2(SymbolStruct('SC', 0, 'BTC', '<<<', all_exchange=False))
+poloniex.add_coin_symbolV2(SymbolStruct('SC', 0, 'BTC', '<<<', all_exchange=False,name='Siacoin'))
 
 coin_list = binance.create_coin_market()
 coin_list.update(bittrex.create_coin_market())
@@ -96,6 +77,7 @@ phone_list.append(phone)
 
 sleep_time = 60
 last_sent = None
+last_scrape=scrape_coins(None,coin_list)
 while (True):
     os.system('clear')
     # scrape.news_list(yobit)
@@ -111,6 +93,7 @@ while (True):
         # print(str.replace(c.get_sms_msg(), '\n', ' '))
         news = news_list.get(c.symbol, None)
         c.set_news(news)
+
         print(c.get_formatted_table_row())
 
         # run rules add coins to send buffer
@@ -118,7 +101,7 @@ while (True):
         # run through send buffer to send
         try:
             # if(c.send_sms(server, logon_id, phone_list, send_minutes=20)):
-            last_scrape=scrape_coins(last_scrape)
+            last_scrape=scrape_coins(last_scrape,coin_list)
             if (c.send_sms(server, from_phone, phone_list, send_minutes=20)):
                 if not connected:
                     # server.connect("smtp.gmail.com", 587)
