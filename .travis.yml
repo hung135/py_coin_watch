@@ -10,6 +10,7 @@ services:
 addons:
   postgresql: "9.6"
 before_script:
+  - psql -c 'drop database if exists travis_ci_test;' -U postgres
   - psql -c 'create database travis_ci_test;' -U postgres
   - psql -c 'create schema coin_test;' -U postgres
 before_install:
