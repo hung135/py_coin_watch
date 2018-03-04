@@ -4,7 +4,10 @@ docker-machine env
 eval $(docker-machine env)
 
 docker rm travis-debug -f
+# this is for a python build find yours Here: https://docs.travis-ci.com/user/common-build-problems/
+# under Running a Container Based Docker Image Locally #
 docker run --name travis-debug -dit travisci/ci-garnet:packer-1512502276-986baf0 /sbin/init
+
 
 docker exec --user travis travis-debug /bin/bash -c "
 export BRANCH=master;
@@ -22,13 +25,8 @@ bundler binstubs travis;
 cd /home/travis/builds/;
 git clone --depth=50 --branch='master' https://github.com/\$PROJECT_PATH \$PROJECT_PATH;
 cd \$PROJECT_PATH;
-pwd
 ~/.travis/travis-build/bin/travis compile >run_ci.sh;
 
 sed -i \"s/branch.*https/branch\\\\\\=\\\\\\'\$BRANCH\\\\\\'\\\\\\ https/g\" run_ci.sh | grep https://github;
 chmod +x run_ci.sh;
-./run_ci.sh;
-
-"
-#chmod +x run_ci.sh
-#./run_ci.sh
+./run_ci.sh"
