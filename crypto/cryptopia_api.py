@@ -71,8 +71,8 @@ class Api(object):
                 error = None
             else:
                 result = None
-                error = req['Error'] if 'Error' in req else 'Unknown Error'
-            return (result, error)
+                # error = req['Error'] if 'Error' in req else 'Unknown Error'
+                return (result, req)
         else:
             return None, "Unknown feature"
 

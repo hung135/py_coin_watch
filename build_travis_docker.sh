@@ -2,10 +2,13 @@
 export MACHINE_NAME="default"
 export VOL_DIR="_docker_travis"
 export WORKDIR=$(basename "$VOL_DIR")
+export VOL_DIR2="_docker_travis_deploy"
+export WORKDIR2=$(basename "$VOL_DIR2")
 export PROJECT_PATH=$(pwd)
 export U=2000
 export G=2000
 diskutil unmount $PROJECT_PATH/$WORKDIR
+diskutil unmount $PROJECT_PATH/$WORKDIR2
 
 
 echo $PROJECT_PATH/$WORKDIR
@@ -13,10 +16,16 @@ rm $PROJECT_PATH/$WORKDIR
 mkdir $PROJECT_PATH/$WORKDIR
 
 docker-machine ssh default sudo rm foo -rf
+docker-machine ssh default sudo rm foo2 -rf
 docker-machine ssh default mkdir foo
+docker-machine ssh default mkdir foo2
+
 docker-machine ssh default chmod 777 foo -R
+docker-machine ssh default chmod 777 foo2 -R
+
 
 docker-machine mount default:/home/docker/foo $PROJECT_PATH/$WORKDIR
+docker-machine mount default:/home/docker/foo2 $PROJECT_PATH/$WORKDIR2
 
 #docker-machine ssh $MACHINE_NAME "sudo mkdir -p \"$VOL_DIR\""
 #vboxmanage sharedfolder add "$MACHINE_NAME" --name "$WORKDIR" --hostpath "$VOL_DIR" --transient
@@ -33,7 +42,7 @@ docker rm travis-debug -f
 #mount local dir
 mkdir travis
 pwd
-docker run --name travis-debug -v /home/docker/foo/:/home/travis/builds/ -dit travisci/ci-garnet:packer-1512502276-986baf0 /sbin/init
+docker run --name travis-debug -v /home/docker/foo/:/home/travis/builds/ -v /home/docker/foo2/:/home/travis/.travis/  -dit travisci/ci-garnet:packer-1512502276-986baf0 /sbin/init
 
 
 docker exec --user travis travis-debug /bin/bash -c "
