@@ -171,7 +171,7 @@ class Exchange:
             #self.mulptile_pairs_json=json
 
             found=False
-            if (error is None or json is None)
+            if (error is None or json is None):
                 json = dict({'error_msg': error})
 
             else:
