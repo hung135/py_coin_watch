@@ -171,7 +171,10 @@ class Exchange:
             #self.mulptile_pairs_json=json
 
             found=False
-            if error is None and json is not None:
+            if (error is None or json is None)
+                json = dict({'error_msg': error})
+
+            else:
                 for x in json:
                     if(x['Label']==coin.market):
                         json=dict(x)
@@ -179,8 +182,6 @@ class Exchange:
                         break
                 if not found:
                     json = dict({'error_msg': self.COIN_NO_FOUND})
-            else:
-                json = dict({'error_msg': error})
 
         if self.exchange_name == 'YOBIT':
             self.exchange_map = YOBIT_MAP
