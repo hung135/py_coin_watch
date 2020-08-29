@@ -30,6 +30,16 @@
         },
         {
             "chainId": 1,
+            "address": "0x0a913bead80f321e7ac35285ee10d9d922659cb7",
+            "name": "DOS Protocol",
+            "symbol": "DOS",
+            "decimals": 18
+
+        },
+
+        
+        {
+            "chainId": 1,
             "address": "0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f",
             "name": "Synthetix Network T",
             "symbol": "SNX",
