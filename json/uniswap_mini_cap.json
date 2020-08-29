@@ -1,5 +1,5 @@
 {
-    "name": "CoinGecko DeFi 100",
+    "name": "_Derived CoinGecko",
     "logoURI": "https://www.coingecko.com/assets/thumbnail-007177f3eca19695592f0b8b0eabbdae282b54154e1be912285c9034ea6cbaf2.png",
     "keywords": [
         "defi"
@@ -19,9 +19,14 @@
             "name": "TrustSwap",
             "symbol": "SWAP",
             "decimals": 18
+        },
+        {
+            "chainId": 1,
+            "address": "0x0e29e5abbb5fd88e28b2d355774e73bd47de3bcd",
+            "name": "Hakka Finance",
+            "symbol": "HAKKA",
+            "decimals": 18
 
-
-                
         },
         {
             "chainId": 1,
