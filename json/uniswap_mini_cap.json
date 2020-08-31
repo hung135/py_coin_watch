@@ -8,10 +8,10 @@
     "tokens": [
         {
             "chainId": 1,
-            "address": "0x3212b29e33587a00fb1c83346f5dbfa69a458923",
-            "name": "The Tokenized Bitco",
-            "symbol": "IMBTC",
-            "decimals": 8
+            "address": "0xfffffffff15abf397da76f1dcc1a1604f45126db",
+            "name": "Falconswap",
+            "symbol": "FSW",
+            "decimals": 18
         },
         {
             "chainId": 1,

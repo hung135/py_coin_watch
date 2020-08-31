@@ -10,3 +10,4 @@ python-bittrex
 poloniex
 #YoBit
 twilio
+uniswap-python
